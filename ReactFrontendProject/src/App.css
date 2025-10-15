@@ -1,0 +1,194 @@
+/* --- RESET DE BASE --- */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body, html {
+  height: 100%;
+  font-family: "Segoe UI", Arial, sans-serif;
+  background-color: #f5f7fa;
+}
+
+.page-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.header {
+  position: relative;
+  width: 100%;
+  height: 250px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.header-image {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  top: 0;
+  left: 0;
+}
+
+.header-content {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+}
+
+.header-content h1 {
+  color: white;
+  font-weight: bold;
+  font-size: 3.5rem;
+  margin-bottom: 15px;
+}
+
+.header-content nav a {
+  color: white;
+  font-weight: bold;
+  text-decoration: none;
+  margin: 0 20px;
+  transition: color 0.3s;
+}
+
+.header-content nav a:hover {
+  color: blue;
+}
+
+.main-content {
+  flex: 1;
+  padding: 60px 20px;
+  max-width: 900px;
+  margin: 0 auto;
+  text-align: center;
+  color: #333;
+  background-color: #f5f5f5;
+  border-radius: 12px;       
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* effet léger d'ombre */
+}
+
+.main-content h2 {
+  font-size: 2rem;
+  color: #345da4;
+  margin-bottom: 20px;
+}
+
+.main-content p {
+  font-size: 1.1rem;
+  line-height: 1.6;
+  color: #444;
+  margin-bottom: 40px;
+}
+
+.button-container {
+  display: flex;
+  justify-content: center;
+  gap: 25px;
+}
+
+.btn {
+  padding: 15px 35px;
+  font-size: 18px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  color: white;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.btn-blue {
+  background-color: #345da4;
+}
+
+.btn-blue:hover {
+  background-color: #003366;
+  transform: translateY(-3px);
+}
+
+.btn-green {
+  background-color: #53B045;
+}
+
+.btn-green:hover {
+  background-color: #1e7e34;
+  transform: translateY(-3px);
+}
+
+.exploration-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+      /* ---- PAGE CATEGORIE METIERS DU NUMERIQUE ---- */
+
+.metiers-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr); /* 3 colonnes */
+  gap: 2rem;
+  padding: 0 1.5rem;
+}
+
+/* Centrer le dernier élément si seule sur la ligne */
+.metiers-grid > a:nth-last-child(1):nth-child(10) {
+  grid-column: 2 / 3; /* centre le 10ème bouton sur la grille 3 colonnes */
+}
+
+.metier-button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100px;
+  background: #345da4;
+  color: #fff;
+  font-size: 1.75rem;
+  font-weight: 600;
+  text-align: center;
+  border-radius: 12px;
+  text-decoration: none;
+  transition: transform 0.2s, background 0.3s, box-shadow 0.3s;
+}
+
+.metier-button:hover {
+  background: #0056b3;
+  transform: translateY(-3px);
+  box-shadow: 0 8px 15px rgba(0,0,0,0.2);
+}
+
+
+.footer {
+  margin-top: auto; /* pousse le footer en bas */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #f5f5f5;
+  height: 100px;
+  width: 100%;
+  border-radius: 12px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  position: relative; /* pas absolute */
+}
+
+
+.footer-image {
+  width: 100%;
+  height: 250px;
+  object-fit: cover;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.footer p {
+  position: relative;
+  z-index: 2;
+  font-size: 1rem;
+  color: #345da4;
+}
