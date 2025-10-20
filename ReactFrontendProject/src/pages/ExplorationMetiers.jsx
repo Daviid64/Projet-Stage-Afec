@@ -13,8 +13,8 @@ function ExplorationMetier() {
     { name: "Développeur IA", link: "/Dev-IA" },
     { name: "Analyste-Cybersécurité", link: "/Analyste-Cyber" },
     { name: "UX/UI Designer", link: "/UX-UI" },
-    { name: "Méthodologie Agile", link: "/Agile" },
-    { name: "Infrastructure et Réseau", link: "/Infra-Reseau" },
+    { name: "Développeur Logiciel Agile", link: "/Agile" },
+    { name: "Technicien Système et Réseau", link: "/Infra-Reseau" },
     { name: "Testeur Logiciel", link: "/Testeur" }
   ];
 
