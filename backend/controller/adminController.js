@@ -1,4 +1,4 @@
-import db from "../db.js";
+import db from "../config/db.js";
 
 export const getAllUsers =async (req,res) => {
     try {
@@ -11,3 +11,7 @@ export const getAllUsers =async (req,res) => {
         res.status(500).json({message: "Erreur serveur", error: err.message});
     }
 };
+
+export const validateUser = async (req,res) => {
+    
+}

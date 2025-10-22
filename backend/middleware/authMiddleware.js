@@ -5,7 +5,7 @@ const JWT_SECRET = process.env.JWT_SECRET; // retirer la valeur par défaut en p
 
 export const verifyToken = (req, res, next) => {
     const authHeader = req.headers.authorization;
-    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    if (!authHeader || !authHeader.startsWith("Bearer")) {
         return res.status(401).json({ message: "Token manquant ou invalide" });
     }
 

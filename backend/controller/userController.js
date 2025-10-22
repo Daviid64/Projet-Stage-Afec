@@ -38,6 +38,39 @@ register: async(req,res) => {
     }
   },
 
+  // A RECODER ET VERIFIER !!
+  // Connexion utilisateur (login) avec vérification du statut
+  login: async (req, res) => {
+    try {
+      const { email, password } = req.body;
+
+      // Chercher l'utilisateur
+      const user = await UserService.findUserByEmail(email, req.pool);
+      if (!user) return res.status(404).json({ message: 'Utilisateur introuvable' });
+
+      // Vérifier si le compte est approuvé
+      if (user.status !== 'approved') {
+        return res.status(403).json({ message: 'Compte en attente de validation par l’admin' });
+      }
+
+      // Vérifier le mot de passe
+      const validPassword = await bcrypt.compare(password, user.password);
+      if (!validPassword) return res.status(401).json({ message: 'Mot de passe incorrect' });
+
+      // Génération du JWT
+      const token = jwt.sign(
+        { id: user.id, role: user.role },
+        process.env.JWT_SECRET,
+        { expiresIn: '1h' }
+      );
+
+      res.status(200).json({ token, role: user.role });
+    } catch (error) {
+      res.status(500).json({ message: error.message });
+    }
+  },
+
+
   // Cherche utilisateur par email
   findByEmail:async(req,res) =>{
     try{
