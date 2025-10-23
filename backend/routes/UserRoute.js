@@ -3,16 +3,26 @@ import userController from '../controller/userController.js';
 
 const router = express.Router();
 
-router.post('/register',userController.register);
+// Inscription
+router.post('/register', userController.register);
 
-router.get('/email',userController.findByEmail);
-router.get('/:id',userController.getById);
-router.get('/',userController.getAll);
-router.get('/verify/:token',userController.verify);
+// Vérification email
+router.get('/verify/:token', userController.verify);
 
-router.delete('/:id',userController.deleteById);
-router.delete('/',userController.deleteAll);
+// Recherche email
+router.get('/email', userController.findByEmail);
 
-router.put('/:id',userController.updatedById);
+// Tous les utilisateurs
+router.get('/', userController.getAll);
+
+// Récupérer un utilisateur par ID (⚠️ Doit être après '/verify')
+router.get('/:id', userController.getById);
+
+// Suppression
+router.delete('/:id', userController.deleteById);
+router.delete('/', userController.deleteAll);
+
+// Mise à jour
+router.put('/:id', userController.updatedById);
 
 export default router;

@@ -13,5 +13,17 @@ export const getAllUsers =async (req,res) => {
 };
 
 export const validateUser = async (req,res) => {
-    
-}
+    try {
+        const {id} = req.params;
+        const {status} = req.body; //'approved' ou 'rejected'
+
+        if(!['approved','rejected'].includes(status)) {
+            return res.status(400).json({message: 'Status invalide'});
+        }
+
+        await db.query('UPDATE users SET status = ? WHERE id = ?', [status,id]);
+        res.status(200).json({message: `Utilisateur ${status}`});
+    }catch(error){
+        res.status(500).json({message: error.message});
+    }
+};

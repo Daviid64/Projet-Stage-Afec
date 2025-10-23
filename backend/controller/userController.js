@@ -1,148 +1,129 @@
 import UserService from '../services/UserService.js';
-import {sendVerificationEmail} from '../utils/mailer.js';
-import crypto from 'crypto';
+import { sendVerificationEmail } from '../utils/mailer.js';
 
 const userController = {
 
-  // Créer un utilisateur
-register: async(req,res) => {
-    try{
-        const userData = req.body;
+  // ✅ Inscription
+  register: async (req, res) => {
+    try {
+      console.log("📌 DEBUG ➝ REQUEST BODY:", req.body);
 
-        const verificationToken = crypto.randomBytes(32).toString('hex');
-        const userId = await UserService.createUser(userData, req.pool,verificationToken);
-        const verificationLink = `http://localhost:5000/verify/${verificationToken}`
+      const { userId, verificationToken } = await UserService.createUser(req.body);
 
-        await sendVerificationEmail(userData.email,verificationLink);
+      const verificationLink = `http://localhost:5000/api/users/verify/${verificationToken}`;
+      console.log("🔗 Verification Link:", verificationLink);
 
-        res.status(201).json({success: true, userId});
-        }catch (error) {
-        res.status(400).json({success: false, message: error.message});
+      // await sendVerificationEmail(req.body.email, verificationLink);
+
+      return res.status(201).json({
+        success: true,
+        message: "Utilisateur créé ! Vérifiez votre email ✅",
+        userId
+      });
+
+    } catch (error) {
+      console.error("❌ Register Error =>", error.message);
+      return res.status(400).json({ success: false, message: error.message });
     }
   },
 
-  // Vérification du compte via token
+  // ✅ Vérification Email
   verify: async (req, res) => {
     try {
-      const { token } = req.params;
+      const verified = await UserService.verifyUserByToken(req.params.token);
+      if (!verified)
+        return res.status(400).json({ success: false, message: "Token invalide ❌" });
 
-      const verified = await UserService.verifyUserByToken(token, req.pool);
+      return res.status(200).json({ success: true, message: "Compte vérifié ✅" });
 
-      if (!verified) {
-        return res.status(400).json({ success: false, message: "Token invalide ou expiré" });
-      }
-
-      res.status(200).json({ success: true, message: "Compte vérifié avec succès !" });
     } catch (error) {
-      res.status(500).json({ success: false, message: error.message });
+      return res.status(500).json({ success: false, message: error.message });
     }
   },
 
-  // A RECODER ET VERIFIER !!
-  // Connexion utilisateur (login) avec vérification du statut
-  login: async (req, res) => {
+  // ✅ Rechercher par email
+  findByEmail: async (req, res) => {
     try {
-      const { email, password } = req.body;
+      const { email } = req.query;
+      const user = await UserService.findUserByEmail(email);
 
-      // Chercher l'utilisateur
-      const user = await UserService.findUserByEmail(email, req.pool);
-      if (!user) return res.status(404).json({ message: 'Utilisateur introuvable' });
+      if (!user)
+        return res.status(404).json({ success: false, message: "Utilisateur non trouvé" });
 
-      // Vérifier si le compte est approuvé
-      if (user.status !== 'approved') {
-        return res.status(403).json({ message: 'Compte en attente de validation par l’admin' });
-      }
+      return res.status(200).json({ success: true, user });
 
-      // Vérifier le mot de passe
-      const validPassword = await bcrypt.compare(password, user.password);
-      if (!validPassword) return res.status(401).json({ message: 'Mot de passe incorrect' });
-
-      // Génération du JWT
-      const token = jwt.sign(
-        { id: user.id, role: user.role },
-        process.env.JWT_SECRET,
-        { expiresIn: '1h' }
-      );
-
-      res.status(200).json({ token, role: user.role });
     } catch (error) {
-      res.status(500).json({ message: error.message });
+      return res.status(400).json({ success: false, message: error.message });
     }
   },
 
+  // ✅ Tous les utilisateurs
+  getAll: async (req, res) => {
+    try {
+      const users = await UserService.getAllUsers();
+      return res.status(200).json({ success: true, users });
 
-  // Cherche utilisateur par email
-  findByEmail:async(req,res) =>{
-    try{
-      const {email} = req.query;
-      const user = await UserService.findUserByEmail(email, req.pool);
-      if(!user) return res.status(404).json({success: false, message: "Utilisateur non trouvé"});
-      res.status(200).json({success:true, user})
     } catch (error) {
-      res.status(400).json({success:false, message: error.message})
+      return res.status(400).json({ success: false, message: error.message });
     }
   },
 
-  // Récupérer tous les utilisateurs
-  getAll:async(req,res) =>{
-    try{
-      const users = await UserService.getAllUsers(req.pool);
-      res.status(200).json({success: true,users});
-    }catch(error) {
-      res.status(400).json({success: false, message: error.message});
-    }
-  },
+  // ✅ Récupérer un utilisateur
+  getById: async (req, res) => {
+    try {
+      const user = await UserService.getUserById(req.params.id);
 
-  // Récupérer un utilisateur par ID
-  getById:async(req, res) => {
-    try{
-      const {id} = req.params;
-      const user = await UserService.getUserById(id, req.pool);
-      if(!user) return res.status(404).json({success: false,message: "Utilisateur non trouvé"});
-      res.status(200).json({success: true,user})
+      if (!user)
+        return res.status(404).json({ success: false, message: "Utilisateur introuvable" });
+
+      return res.status(200).json({ success: true, user });
+
     } catch (error) {
-      res.status(400).json({success:false, message: error.message});
+      return res.status(400).json({ success: false, message: error.message });
     }
   },
 
-  deleteById: async(req,res) => {
-    try{
-      const {id} = req.params;
-      const deleted = await UserService.deleteUserById(id, req.pool);
+  // ✅ Supprimer un utilisateur
+  deleteById: async (req, res) => {
+    try {
+      const deleted = await UserService.deleteUserById(req.params.id);
 
-      if (!deleted) {
-        return res.status(404).json({success: true, message:"Utilisateur non trouvé"})
-      }
-     res.status(200).json({success:true, message: "Utilisateur supprimé avec succés"})
-    }catch(error){
-      res.status(400).json({success:false, message: error.message});
+      if (!deleted)
+        return res.status(404).json({ success: false, message: "Utilisateur introuvable" });
+
+      return res.status(200).json({ success: true, message: "Utilisateur supprimé ✅" });
+
+    } catch (error) {
+      return res.status(400).json({ success: false, message: error.message });
     }
   },
 
-  deleteAll: async(req,res) => {
-    try{
-      const deleted = await UserService.deleteAllUsers(req.pool);
-      res.status(200).json({success: true,deleted});
-    }catch(error){
-      res.status(400).json({success: false,message:`${deletedAll} utilisateurs supprimés`});
+  // ✅ Supprimer tout
+  deleteAll: async (req, res) => {
+    try {
+      const deleted = await UserService.deleteAllUsers();
+      return res.status(200).json({ success: true, deleted });
+
+    } catch (error) {
+      return res.status(400).json({ success: false, message: error.message });
     }
   },
 
-  updatedById: async (req,res) => {
-    try{
-      const {id} = req.params;
-      const updated = await UserService.updateUserById(id, req.body);
+  // ✅ Modifier un utilisateur
+  updatedById: async (req, res) => {
+    try {
+      const updated = await UserService.updateUserById(req.body, req.params.id);
 
-      if(!updated) {
-        return res.status(404).json({success:false, message: "Utilisateur non trouvé"});
-      }
+      if (!updated)
+        return res.status(404).json({ success: false, message: "Utilisateur introuvable" });
 
-      res.status(200).json({success: true, message: "Utilisateur modifié avec succès"});
-    }catch(error){
-      res.status(400).json({success: false, message: error.message});
+      return res.status(200).json({ success: true, message: "Utilisateur mis à jour ✅" });
+
+    } catch (error) {
+      return res.status(400).json({ success: false, message: error.message });
     }
   }
 
-  };
+};
 
-  export default userController;
+export default userController;
