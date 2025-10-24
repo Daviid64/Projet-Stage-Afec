@@ -34,9 +34,6 @@ function Acceuil() {
           <Link to="/exploration" className="btn btn-blue">
             Exploration Métiers
           </Link>
-          <Link to="/contact" className="btn btn-green">
-            Formulaire de Contact
-          </Link>
         </div>
       </main>
 
