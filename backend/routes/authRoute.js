@@ -9,16 +9,16 @@ router.post('/login', async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    const user = await UserService.findUserByEmail(email);
-    if (!user) return res.status(404).json({ message: "Utilisateur non trouvé" });
+    const user = await UserService.findUserByEmail(email);    // Vérifier le role si pas admin vérifier le statut si non approuvé "erreur"
+    if (!user) return res.status(403).json({ message: "email ou mot de passe invalide" });
 
     // Vérification du mot de passe
     const validPassword = await bcrypt.compare(password, user.password);
-    if (!validPassword) return res.status(401).json({ message: "Mot de passe incorrect" });
+    if (!validPassword) return res.status(401).json({ message: "email ou mot de passe incorrect" });
 
     // Génération du token JWT
     const token = jwt.sign(
-      { id: user.id, role: 'super_admin' }, // ou récupérer le rôle depuis user_role
+      { id: user.id }, // ou récupérer le rôle depuis user_role
       process.env.JWT_SECRET,
       { expiresIn: '1h' }
     );

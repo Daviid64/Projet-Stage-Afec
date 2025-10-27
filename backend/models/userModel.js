@@ -5,37 +5,44 @@ const userModel = {
 
   // Créer un utilisateur
   create: async (userData, pool) => {
-    const { password, confirmPassword, email, first_name, last_name, agency_id, role_id } = userData;
+  const { password, first_name, last_name, email, role_id } = userData;
 
-    // Vérification du mot de passe
-    if (password !== confirmPassword) {
-      throw new Error("Les mots de passe ne correspondent pas !");
+  // Vérification mot de passe côté service
+  if (!password) throw new Error("Le mot de passe est obligatoire");
+
+  // Hash du mot de passe
+  const hashedPassword = await bcrypt.hash(password, 10);
+
+  // Génération d'un token de vérification
+  const verificationToken = crypto.randomBytes(32).toString('hex');
+
+  // Insertion utilisateur
+  const sqlUser = `
+    INSERT INTO users (first_name, last_name, email, password, status, verificationToken, created_at, updated_at)
+    VALUES (?, ?, ?, ?, 'pending', ?, NOW(), NOW())
+  `;
+  const [result] = await pool.query(sqlUser, [first_name, last_name, email, hashedPassword, verificationToken]);
+  const userId = result.insertId;
+
+  // Assigner un rôle par défaut si aucun role_id fourni
+  const assignedRoleId = role_id || 1;
+  if (!assignedRoleId) {
+    const [rows] = await pool.query('SELECT id FROM role WHERE name = ?', ['stagiaire']);
+    if (rows.length === 0) {
+      throw new Error('Rôle par défaut "stagiaire" non trouvé dans la base de données');
     }
+    assignedRoleId = rows[0].id;
+  }
 
-    // Hash du mot de passe
-    const hashedPassword = await bcrypt.hash(password, 10);
+  const sqlRole = `
+    INSERT INTO user_role (user_id, role_id, assigned_at)
+    VALUES (?, ?, NOW())
+  `;
+  await pool.query(sqlRole, [userId, assignedRoleId]);
 
-    // Génération d'un token de vérification
-    const verificationToken = crypto.randomBytes(32).toString('hex');
+  return { userId, verificationToken };
+},
 
-    const sqlUser = `
-      INSERT INTO users (first_name, last_name, email, password, status, verificationToken, agency_id, created_at, updated_at)
-      VALUES (?, ?, ?, ?, 'pending', ?, ?, NOW(), NOW())
-    `;
-    const [result] = await pool.query(sqlUser, [first_name, last_name, email, hashedPassword, verificationToken, agency_id]);
-    const userId = result.insertId;
-
-    // Assigner un rôle si fourni
-    if (role_id) {
-      const sqlRole = `
-        INSERT INTO user_role (user_id, role_id, assigned_at)
-        VALUES (?, ?, NOW())
-      `;
-      await pool.query(sqlRole, [userId, role_id]);
-    }
-
-    return { userId, verificationToken };
-  },
 
   // Chercher un utilisateur par email
   findByEmail: async (email, pool) => {
@@ -56,10 +63,9 @@ const userModel = {
     const sql = `
       SELECT 
         u.id, u.first_name, u.last_name, u.email, u.status,
-        u.created_at, u.updated_at, a.name AS agency_name,
+        u.created_at, u.updated_at,
         GROUP_CONCAT(r.name) AS roles
       FROM users u
-      LEFT JOIN agencies a ON a.id = u.agency_id
       LEFT JOIN user_role ur ON ur.user_id = u.id
       LEFT JOIN role r ON ur.role_id = r.id
       GROUP BY u.id
@@ -99,15 +105,13 @@ const userModel = {
 
   // Mettre à jour un utilisateur par ID
   updateById: async (userData, id, pool) => {
-    const { first_name, last_name, email, status, agency_id } = userData;
-
+    const { first_name, last_name, email, status } = userData;
     const sql = `
       UPDATE users 
-      SET first_name = ?, last_name = ?, email = ?, status = ?, agency_id = ?, updated_at = NOW()
+      SET first_name = ?, last_name = ?, email = ?, status = ?, updated_at = NOW()
       WHERE id = ?
     `;
-
-    const [result] = await pool.query(sql, [first_name, last_name, email, status, agency_id, id]);
+    const [result] = await pool.query(sql, [first_name, last_name, email, status, id]);
     return result.affectedRows;
   },
 
