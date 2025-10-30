@@ -6,9 +6,6 @@ const router = express.Router();
 // Inscription
 router.post('/register', userController.register);
 
-// Connexion
-router.post('/login', userController.login)
-
 // Vérification email
 router.get('/verify/:token', userController.verify);
 

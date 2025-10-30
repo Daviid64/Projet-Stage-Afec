@@ -1,16 +1,29 @@
 import UserService from '../services/UserService.js';
 import { sendVerificationEmail } from '../utils/mailer.js';
-import bcrypt from 'bcrypt';
 
 const userController = {
 
   // Inscription
   register: async (req, res) => {
     try {
+      const { agency_id } = req.body;
+
+      // Vérification obligatoire de l'agence
+      if (!agency_id) {
+        return res.status(400).json({ success: false, message: "L'agence est obligatoire !" });
+      }
+
       const { userId, verificationToken } = await UserService.createUser(req.body);
 
-      const verificationLink = `${process.env.BACKEND_URL}/api/users/verify/${verificationToken}`;
-      await sendVerificationEmail(req.body.email, verificationLink);
+      const verificationLink = `${process.env.BACKEND_URL}/users/verify/${verificationToken}`.trim();
+      console.log("🔗 Lien de vérification :", verificationLink);
+
+      // Envoi de l'email dans un try/catch séparé pour ne pas bloquer la création
+      try {
+        await sendVerificationEmail(req.body.email, verificationLink);
+      } catch (emailError) {
+        console.warn("⚠️ L'email de vérification n'a pas pu être envoyé :", emailError.message);
+      }
 
       return res.status(201).json({
         success: true,
@@ -32,23 +45,6 @@ const userController = {
       return res.status(200).json({ success: true, message: "Compte vérifié" });
     } catch (error) {
       return res.status(500).json({ success: false, message: error.message });
-    }
-  },
-
-  // Connexion
-  login: async (req, res) => {
-    try {
-      const { email, password } = req.body;
-      const user = await UserService.login(email, password);
-
-      return res.status(200).json({
-        success: true,
-        message: "Connexion réussie",
-        user
-      });
-
-    } catch (error) {
-      return res.status(400).json({ success: false, message: error.message });
     }
   },
 
