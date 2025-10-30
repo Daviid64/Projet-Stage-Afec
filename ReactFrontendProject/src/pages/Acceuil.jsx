@@ -1,33 +1,30 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import AfecImage from "../assets/AfecImage.png";
 import "../App.css";
+import logoAfec from "../assets/logoAfec.png"
 
 function Acceuil() {
   return (
     <div className="page-container">
      
-      <header className="header">
-        <img src={AfecImage} alt="AFEC" className="header-image" />
-        <div className="header-content">
-          <h1>Accueil</h1>
-          <nav>
-            <Link to="/contact" className="nav-link">Formulaire de Contact</Link>
-            <Link to="/exploration" className="nav-link">Exploration des Métiers</Link>
-          </nav>
-        </div>
-      </header>
+
+ <header className="header-blue">
+  <img src={logoAfec} alt="Logo AFEC" className="header-logo" />
+
+  <nav className="header-nav">
+    <Link to="/exploration" className="nav-link">
+      Exploration des Métiers
+    </Link>
+  </nav>
+</header>
 
       <main className="main-content">
-        <h2>Plateforme de Formation en ligne AFEC</h2>
+        <h2>Découvrez les métiers du numérique avec l’AFEC</h2>
         <p>
-          Lorem, ipsum dolor sit amet consectetur adipisicing elit. Dolore quod id fuga at nesciunt, rem accusantium veniam obcaecati iste aliquam cupiditate reiciendis. Magnam voluptate, optio est magni ipsa voluptatum? Laudantium.
-          Distinctio repudiandae dolorem et eos minus suscipit ipsam reiciendis id minima. Doloribus obcaecati totam, architecto iste officia, dolorum debitis deserunt quos aliquid temporibus voluptatum assumenda libero! Omnis ea officiis odio?
-          Id, voluptatum natus sed deserunt repellendus atque. Nobis, quae rem id ab vitae consequuntur fuga animi sit itaque totam error! Cumque obcaecati amet aliquam at quam fugit odio quod nisi.
-          Consequuntur, repellendus? Voluptatibus, deserunt nulla! Consectetur doloribus ullam ea reiciendis beatae, placeat sunt doloremque commodi rerum? Consectetur voluptatum laudantium debitis, iste accusamus magni a? Vel, necessitatibus quis. Sed, nulla non.
-          Et soluta tempore in unde? Voluptatum ex blanditiis animi a delectus quasi fugit modi numquam repellat sequi, voluptas id asperiores. Id quae recusandae repellat blanditiis? Beatae culpa quaerat blanditiis doloremque.
-          Tenetur nam ipsa assumenda voluptatem ipsam atque eligendi inventore nobis molestiae saepe! Quasi maxime in eum repudiandae, rem laudantium quo sed. Quibusdam corporis voluptates quo odio, eligendi possimus repudiandae maiores?
-          Ea libero, repellendus veritatis numquam nihil laborum soluta perspiciatis adipisci tempora? Molestias facilis, soluta, facere quidem voluptatem, beatae qui at repudiandae ullam ipsam vel explicabo. Suscipit sequi eos fugit deserunt.
+Le numérique est partout : dans nos entreprises, nos vies et nos métiers. Mais savez-vous vraiment quelles opportunités il offre ?
+Avec l’AFEC, explorez un univers de carrières passionnantes et accessibles à tous : développement web, cybersécurité, data, et design web !
+À travers nos programmes de découverte, nos témoignages de professionnels et nos formations certifiantes, nous vous aidons à mieux comprendre les métiers du digital et à trouver celui qui vous correspond.
+Découvrez, apprenez et construisez votre parcours avec l’AFEC.
         </p>
 
         <div className="button-container">

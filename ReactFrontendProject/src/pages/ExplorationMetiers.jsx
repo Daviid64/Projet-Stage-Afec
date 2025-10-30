@@ -2,7 +2,8 @@ import React from 'react';
 import '../App.css';
 import "../index.css"
 import { Link } from 'react-router-dom';
-import AfecImage from "../assets/AfecImage.png";
+import logoAfec from "../assets/logoAfec.png"
+
 
 function ExplorationMetier() {
   const metiers = [
@@ -20,15 +21,14 @@ function ExplorationMetier() {
 
   return (
     <div className="exploration-container">
-      <header className="header">
-        <img src={AfecImage} alt="AFEC" className="header-image" />
-        <div className="header-content">
-          <h1>Exploration des Métiers</h1>
-          <nav>
-            <Link to="/" className="nav-link">Accueil</Link>
-          </nav>
-        </div>
+      <header className="header-blue">
+        <img src={logoAfec} alt="Logo AFEC" className="header-logo" />
+
+        <nav className="header-nav">
+          <Link to="/" className="nav-link">Accueil</Link>
+        </nav>
       </header>
+      
 
       <main className="main-content">
         <h2 className="main-title">Découvrez nos métiers du numérique</h2>
