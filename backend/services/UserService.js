@@ -25,10 +25,6 @@ const UserService = {
       agency_id
     }, pool);
 
-    // Envoi mail
-    // const verificationLink = `${process.env.FRONTEND_URL}/verify/${verificationToken}`;
-    // await sendVerificationEmail(email, verificationLink);
-
     return { userId, verificationToken };
   },
 

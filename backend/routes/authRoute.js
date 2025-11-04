@@ -2,6 +2,7 @@ import express from 'express';
 import UserService from '../services/UserService.js';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
+import nodemailer from 'nodemailer'
 
 const router = express.Router();
 
@@ -50,7 +51,7 @@ router.post("/forgotPassword", async (req, res) => {
       return res.status(404).json({success: false, message: "Utilisateur introuvable"});
     }
 
-  const resetToken = jwt.sign({id: user.id}, process.env.JWT, {expiresIn:"15m"});
+  const resetToken = jwt.sign({id: user.id}, process.env.JWT_SECRET, {expiresIn:"15m"});
   const resetLink = `http://localhost:5173/reset-password?token=${resetToken}`;
 
 
@@ -74,8 +75,12 @@ router.post("/forgotPassword", async (req, res) => {
      <a href="${resetLink}">${resetLink}</a>
     <p> Si vous n'avez pas fait cette demande, ignorez ce message. </p>
     `,
-  });
+  },(err, info) => {
+  if (err) console.error("Erreur envoi mail :", err);
+  else console.log("Mail envoyé :", info.response);
+});
 
+  console.log("Lien de réinitialisation :", resetLink)
   return res.status(200).json({success: true, message: "Lien de réinitialisation envoyé"});
   } catch (error) {
     console.error("Erreur password", error);
