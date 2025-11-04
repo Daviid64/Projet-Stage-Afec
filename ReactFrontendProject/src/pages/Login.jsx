@@ -20,20 +20,25 @@ export default function LoginPage() {
         // Stocker le token pour les futures requêtes
         localStorage.setItem("token", response.data.token);
         localStorage.setItem("user", JSON.stringify(response.data.user));
-
         setMessage("Connexion réussie !");
         console.log("Utilisateur connecté :", response.data.user);
 
         // Redirection selon le rôle
         const role = response.data.user.roles?.[0];
         if (role === "super_admin") window.location.href = "/admin";
-        else window.location.href = "/dashboard";
+        else window.location.href = "/";
       } else {
-        setMessage("❌ " + response.data.message);
+        setMessage("erreur " + response.data.message);
       }
     } catch (err) {
-      console.error(err);
-      setMessage("❌ Email ou mot de passe invalide");
+      console.error("Erreur login", err);
+
+      if (err.response && err.response.data && err.response.data.message) {
+      setMessage(err.response.data.message);
+      // console.log(err.response);
+      }  else {
+        setMessage("Erreur de connexion au serveur")
+      }
     }
   };
 
@@ -65,6 +70,10 @@ export default function LoginPage() {
         </button>
 
         {message && <p className="login-message">{message}</p>}
+
+        <p className="forgotPassword">
+          <a href="/forgotPassword">Mot de passe oublié ?</a>
+        </p>
       </form>
     </div>
   );

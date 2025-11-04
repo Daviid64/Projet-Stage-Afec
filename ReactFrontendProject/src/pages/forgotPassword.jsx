@@ -1,0 +1,54 @@
+import { useState } from "react";
+import axios from "axios";
+import "./Login.css"
+
+export default function ForgotPasswordPage() {
+    const [email, setEmail] = useState("");
+    const [message, setMessage] = useState("");
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();     // Empêche le rechargement de la page
+        setMessage("");     // Réinitialise le message visible avant la nouvelle requête
+    
+
+    try {
+        const response = await axios.post('http://localhost:5000/auth/forgotPassword', {
+        email,    
+        });
+
+        if (response.data.success) {
+            setMessage(response.data.message);
+        }
+    } catch (err) {
+        console.error("Erreur forgot password", err);
+        if (err.response?.data?.message) {
+            setMessage(err.response?.data?.message);
+        } else {
+            setMessage("Erreur de connexion au serveur");
+        }
+    }
+}
+
+return (
+    <div className="login-container">
+        <form onSubmit={handleSubmit}>
+        <h2 className="login-title">Mot de passe oublié</h2> 
+
+        <input 
+        type="email" 
+        placeholder="Adresse e-mail"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+        className="login-input"
+        required
+        />
+
+        <button type="submit" className="login-button">
+            Envoyer le lien
+        </button>
+
+        {message && <p className="login-message">{message}</p>}
+        </form>
+    </div>
+);
+}

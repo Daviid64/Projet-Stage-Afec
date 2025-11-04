@@ -10,13 +10,16 @@ function ExplorationMetier() {
     { name: "Développement Backend", link: "/Dev-Backend" },
     { name: "Développement Frontend", link: "/Dev-Frontend" },
     { name: "Développement Fullstack", link: "/Dev-Fullstack" },
-    { name: "Développeur OpSec(Operationnal Security)", link: "/OpSec" },
-    { name: "Développeur IA", link: "/Dev-IA" },
-    { name: "Analyste-Cybersécurité", link: "/Analyste-Cyber" },
-    { name: "UX/UI Designer", link: "/UX-UI" },
-    { name: "Développeur Logiciel Agile", link: "/Agile" },
-    { name: "Technicien Système et Réseau", link: "/Infra-Reseau" },
-    { name: "Testeur Logiciel", link: "/Testeur" }
+    { name: "Intégrateur Web", link: "/Intégrateur-Web" },
+    { name: "Scrum Master", link: "/Scrum-Master" },
+    { name: "UX/UI DESIGNER", link: "/UX-UI" },
+    { name: "Graphiste/Motion Designer", link: "/Graphiste" },
+    { name: "Data Scientist", link: "/Data-Scientist" },
+    { name: "Product Owner", link: "/Product-Owner" },
+    { name: "Data Analyst", link: "/Data-Analyst" },
+    { name: "Expert Cybersécurité", link: "/Expert-Cybersécurité" },
+    { name: "Administrateur Réseau", link: "/Administrateur-Réseau" },
+    { name: "Développeur IA", link: "/Développeur-IA" }
   ];
 
   return (

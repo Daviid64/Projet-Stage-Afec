@@ -13,7 +13,7 @@ export default function Register() {
   const agences = [
     "Afec Bayonne",
     "Afec Pau",
-    "Afec Dax",
+    "Afec Bordeaux",
     "Afec Angoulème",
     "Afec La Rochelle",
     "Afec Agen",
