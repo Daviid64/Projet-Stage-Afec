@@ -8,6 +8,7 @@ import LoginPage from "./pages/Login.jsx";
 import Register from "./pages/inscription.jsx";
 import API from "./api.js"
 import ForgotPasswordPage from "./pages/forgotPassword.jsx"
+import ResetPasswordPage from "./pages/ResetPassword.jsx";
 
 function App() {
 
@@ -25,9 +26,11 @@ useEffect(() => {
 
         <Route path="/login" element={<LoginPage />} />
 
-        <Route path="/login" element={<LoginPage />} />
-
         <Route path="/forgotPassword" element={<ForgotPasswordPage />} />
+
+        <Route path="/reset-password" element={<ResetPasswordPage />} />
+
+        <Route path="/" element={<Acceuil />} />
 
         <Route path="/exploration" element={<ExplorationMetiers />} />
 
