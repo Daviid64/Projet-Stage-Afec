@@ -11,7 +11,7 @@ const PORT = process.env.PORT || 3000;
 
 app.use(cors({
   origin: "http://localhost:5173",
-  credentials: true
+  credentials: true   // Pour autoriser les cookies
 }));
 
 app.use(express.json());
@@ -19,6 +19,11 @@ app.use(express.json());
 app.use("/users", UserRoute)
 app.use("/admin", adminRoutes);
 app.use("/auth",authRoutes)
+
+app.get('/api/test',(req, res) => {
+res.json({message: 'Connexion backend OK'});
+});
+
 
 app.get('/verify/:token', (req, res) => {
   const { token } = req.params;

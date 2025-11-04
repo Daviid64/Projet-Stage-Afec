@@ -15,8 +15,11 @@ export const getAllUsers =async (req,res) => {
 export const validateUser = async (req,res) => {
     try {
         const {id} = req.params;
-        const {status} = req.body; //'approved' ou 'rejected'
+        const {status} = req.body; //'approved' ou 'rejected' et pending
 
+        // console.log(!['approved','rejected'].includes(status)); // A rajouter 
+        // console.log(status)
+        
         if(!['approved','rejected'].includes(status)) {
             return res.status(400).json({message: 'Status invalide'});
         }

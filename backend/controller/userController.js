@@ -1,5 +1,4 @@
 import UserService from '../services/UserService.js';
-import { sendVerificationEmail } from '../utils/mailer.js';
 
 const userController = {
 
@@ -9,27 +8,28 @@ const userController = {
       const { agency_id } = req.body;
 
       // Vérification obligatoire de l'agence
+
       if (!agency_id) {
         return res.status(400).json({ success: false, message: "L'agence est obligatoire !" });
       }
 
-      const { userId, verificationToken } = await UserService.createUser(req.body);
+       const { userId, verificationToken } = await UserService.createUser(req.body);
 
-      const verificationLink = `${process.env.BACKEND_URL}/users/verify/${verificationToken}`.trim();
-      console.log("🔗 Lien de vérification :", verificationLink);
+      // const verificationLink = `${process.env.BACKEND_URL}/users/verify/${verificationToken}`.trim();
+      // console.log("Lien de vérification :", verificationLink);
 
       // Envoi de l'email dans un try/catch séparé pour ne pas bloquer la création
-      try {
-        await sendVerificationEmail(req.body.email, verificationLink);
-      } catch (emailError) {
-        console.warn("⚠️ L'email de vérification n'a pas pu être envoyé :", emailError.message);
-      }
+      // try {
+      //   await sendVerificationEmail(req.body.email, verificationLink);
+      // } catch (emailError) {
+      //   console.warn("L'email de vérification n'a pas pu être envoyé :", emailError.message);
+      // }
 
-      return res.status(201).json({
-        success: true,
-        message: "Utilisateur créé ! Vérifiez votre email",
-        userId
-      });
+       return res.status(201).json({
+         success: true,
+         message: "Utilisateur créé !",
+         userId
+       });
 
     } catch (error) {
       return res.status(400).json({ success: false, message: error.message });
@@ -89,7 +89,7 @@ const userController = {
       const deleted = await UserService.deleteUserById(req.params.id);
       if (!deleted) return res.status(404).json({ success: false, message: "Utilisateur introuvable" });
 
-      return res.status(200).json({ success: true, message: "Utilisateur supprimé ✅" });
+      return res.status(200).json({ success: true, message: "Utilisateur supprimé " });
     } catch (error) {
       return res.status(400).json({ success: false, message: error.message });
     }
@@ -111,7 +111,7 @@ const userController = {
       const updated = await UserService.updateUserById(req.body, req.params.id);
       if (!updated) return res.status(404).json({ success: false, message: "Utilisateur introuvable" });
 
-      return res.status(200).json({ success: true, message: "Utilisateur mis à jour ✅" });
+      return res.status(200).json({ success: true, message: "Utilisateur mis à jour" });
     } catch (error) {
       return res.status(400).json({ success: false, message: error.message });
     }

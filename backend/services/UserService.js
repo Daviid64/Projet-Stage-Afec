@@ -2,7 +2,6 @@ import userModel from '../models/userModel.js';
 import pool from '../config/db.js';
 import crypto from 'crypto';
 import bcrypt from 'bcrypt';
-import { sendVerificationEmail } from '../utils/mailer.js';
 
 const UserService = {
 
@@ -14,7 +13,7 @@ const UserService = {
 
     // Hash du mot de passe
     const hashedPassword = await bcrypt.hash(password, 10);
-
+      
     // Token de vérification
     const verificationToken = crypto.randomBytes(32).toString('hex');
 
@@ -27,8 +26,8 @@ const UserService = {
     }, pool);
 
     // Envoi mail
-    const verificationLink = `${process.env.FRONTEND_URL}/verify/${verificationToken}`;
-    await sendVerificationEmail(email, verificationLink);
+    // const verificationLink = `${process.env.FRONTEND_URL}/verify/${verificationToken}`;
+    // await sendVerificationEmail(email, verificationLink);
 
     return { userId, verificationToken };
   },

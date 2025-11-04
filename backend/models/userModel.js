@@ -29,7 +29,7 @@ const userModel = {
       VALUES (?, ?, NOW())
     `;
     await pool.query(sqlRole, [userId, assignedRoleId]);
-
+     
     return { userId };
   },
 
