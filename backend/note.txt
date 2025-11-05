@@ -1,0 +1,30 @@
+        Les différentes étapes dans ma fonction de réinitialisation de mot de passe : 
+
+        1- On crée une route POST accessible à l’URL /auth/reset-password
+
+        2- On récupère les données envoyées depuis le frontend :
+            token = le code secret envoyé dans l’email,
+            password = le nouveau mot de passe choisi par l’utilisateur.
+
+        3- On vérifie que le token est valide (et pas expiré).
+            jwt.verify() décode le token et vérifie sa signature avec ta clé secrète (JWT_SECRET).
+            Si le token est bon, tu obtiens dedans des infos comme decoded.id (l’ID de l’utilisateur).
+            Si le token est expiré → une erreur est levée et capturée dans le catch.
+
+        4- On cherche dans la base l’utilisateur qui a cet ID.
+
+        5- Si aucun utilisateur ne correspond, on renvoie une erreur “404” = “Utilisateur introuvable”.
+
+        6- On chiffre le mot de passe avant de le sauvegarder.
+            bcrypt.hash() transforme le mot de passe en une suite de caractères illisible.
+            Même l’administrateur de la base ne peut pas voir le mot de passe original.
+            10 est le “niveau de sécurité” du chiffrement.
+
+        7- On met à jour le mot de passe de cet utilisateur dans la base de données.
+
+        8- Tout s’est bien passé ✅
+           On répond au frontend avec un message de succès.
+
+        9- Ce bloc “attrape” toutes les erreurs possibles :
+           Si le token a expiré, on renvoie un message clair.
+           Si c’est une autre erreur (ex: problème de base de données), on renvoie une erreur serveur générique.

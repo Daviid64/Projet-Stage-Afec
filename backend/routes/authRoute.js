@@ -3,9 +3,11 @@ import UserService from '../services/UserService.js';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import nodemailer from 'nodemailer'
+import userController from '../controller/userController.js';
 
 const router = express.Router();
 
+// Route de Login
 router.post('/login', async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -84,6 +86,63 @@ router.post("/forgotPassword", async (req, res) => {
   return res.status(200).json({success: true, message: "Lien de réinitialisation envoyé"});
   } catch (error) {
     console.error("Erreur password", error);
+    return res.status(500).json({success: false, message: "Erreur serveur"});
+  }
+});
+
+// Réinitialisation du mot de passe
+
+router.post("/reset-password", async (req, res) => {
+  try {
+    const {token , password} = req.body;
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+    const user = await UserService.getUserById(decoded.id);
+    if (!user) {
+      return res.status(404).json({success: false, message: "Utilisateur introuvable"});
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    await UserService.updateUserPassword(user.id, hashedPassword);
+
+    return res.status(200).json({success: true, message: "Mot de passe rénitialisé avec succès"});
+  }catch (error) {
+    console.error("Erreur reset-password : ", error);
+
+    if (error.name === "Erreur reset-password :", error);
+
+    if (error.name === "TokenExpiredError") {
+      return res.status(400).json({success: false, message:"Lien expiré, veuillé réitérer votre demande"});
+    }
+
+    return res.status(500).json({success: false, message: "Erreur serveur"});
+  }
+});
+
+//Route d'inscription
+router.post("/register", async (req, res) => {
+  try {
+    const {first_name, last_name, email, password, confirmPassword, agency_id } = req.body;
+
+    const existingUser = await UserService.findUserByEmail(email);
+    if(existingUser) {
+      return res.status(400).json({success: false, message: "Email déjà utilisé"});
+    }
+
+    const {userId} = await UserService.createUser({
+      first_name,
+      last_name,
+      email,
+      password,
+      confirmPassword,
+      agency_id
+    });
+
+    return res.status(201).json({success: true, message: "Utilisateur créé avec succès", user: {id: userId, first_name, last_name, email, agency_id}});
+  } catch (error) {
+    console.error("Erreur register", error);
     return res.status(500).json({success: false, message: "Erreur serveur"});
   }
 });

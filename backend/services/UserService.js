@@ -7,7 +7,12 @@ const UserService = {
 
   // Création du compte 
   createUser: async (userData) => {
-    const { password, confirmPassword, email, agency_id } = userData;
+    const {  first_name, last_name, email, password,confirmPassword, agency_id } = userData;
+
+    const existingUser = await userModel.findByEmail(email, pool);
+    if (existingUser) {
+      throw new Error("Email déjà utilisé");
+    }
 
     if (password !== confirmPassword) throw new Error("Les mots de passe ne correspondent pas !");
 
@@ -19,7 +24,9 @@ const UserService = {
 
     // Création utilisateur avec agency_id
     const { userId } = await userModel.create({
-      ...userData,
+      first_name,
+      last_name,
+      email,
       password: hashedPassword,
       verificationToken,
       agency_id
@@ -70,6 +77,11 @@ const UserService = {
     return await userModel.updateById(userData, id, pool);
   },
 
+  updateUserPassword: async (id,hashedPassword) => {
+    const query = "UPDATE users SET password = ? WHERE id = ?";
+    return await pool.query(query, [hashedPassword,id])
+  },
+
   deleteUserById: async (id) => {
     return await userModel.deleteById(id, pool);
   },
@@ -78,6 +90,6 @@ const UserService = {
     return await userModel.deleteAll(pool);
   }
 
-};
+}
 
 export default UserService;

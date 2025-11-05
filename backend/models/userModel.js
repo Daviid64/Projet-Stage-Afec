@@ -102,6 +102,13 @@ const userModel = {
     return result.affectedRows;
   },
 
+  // Mettre à jour le mot de passe d'un utilisateur
+  updatePassword: async (id, hashedPassword, pool) => {
+    const sql = `UPDATE users SET password = ?, updated_at = NOW() WHERE id = ?`;
+    const [result] = await pool.query(sql, [hashedPassword, id]);
+    return result.affectedRows;
+  }
+
 };
 
 export default userModel;
