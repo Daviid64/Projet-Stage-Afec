@@ -1,5 +1,6 @@
 import { useState } from "react";
-import "./Login.css"; // On utilise ton style existant
+import axios from "axios"; // <-- n'oublie pas d'importer axios
+import "./Login.css";
 
 export default function Register() {
   const [formData, setFormData] = useState({
@@ -8,15 +9,17 @@ export default function Register() {
     agency: "",
     email: "",
     password: "",
+    confirmPassword: "",
   });
+  const [message, setMessage] = useState(""); // pour afficher les messages
 
   const agences = [
-    "Afec Bayonne",
-    "Afec Pau",
-    "Afec Bordeaux",
-    "Afec Angoulème",
-    "Afec La Rochelle",
-    "Afec Agen",
+  { id: 1, name: "Afec Bayonne" },
+  { id: 2, name: "Afec Pau" },
+  { id: 3, name: "Afec Bordeaux" },
+  { id: 4, name: "Afec Angoulème" },
+  { id: 5, name: "Afec La Rochelle" },
+  { id: 6, name: "Afec Agen" },
   ];
 
   const handleChange = (e) => {
@@ -26,10 +29,31 @@ export default function Register() {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Form submitted:", formData);
-    // Ici tu peux appeler ton API backend pour créer le compte
+
+    try {
+      const response = await axios.post("http://localhost:5000/auth/register", {
+        first_name: formData.firstName,
+        last_name: formData.lastName,
+        agency_id: formData.agency, // selon ce que ton backend attend
+        email: formData.email,
+        password: formData.password,
+        confirmPassword: formData.confirmPassword,
+      });
+
+      if (response.data.success) {
+        setMessage("Inscription réussie !");
+        console.log("Utilisateur créé :", response.data.user);
+        // Redirection si besoin
+        window.location.href = "/login";
+      } else {
+        setMessage(response.data.message || "Erreur lors de l'inscription");
+      }
+    } catch (err) {
+      console.error("Erreur register", err);
+      setMessage(err.response?.data?.message || "Erreur de connexion au serveur");
+    }
   };
 
   return (
@@ -68,8 +92,8 @@ export default function Register() {
             Choisir une agence
           </option>
           {agences.map((a) => (
-            <option key={a} value={a}>
-              {a}
+            <option key={a.id} value={a.id}>
+              {a.name}
             </option>
           ))}
         </select>
@@ -94,9 +118,21 @@ export default function Register() {
           required
         />
 
+        <input
+          className="login-input"
+          type="password"
+          name="confirmPassword"
+          placeholder="Confirmer le mot de passe"
+          value={formData.confirmPassword}
+          onChange={handleChange}
+          required
+        />
+
         <button className="login-button" type="submit">
           S'inscrire
         </button>
+
+        {message && <p className="login-message">{message}</p>}
       </form>
     </div>
   );

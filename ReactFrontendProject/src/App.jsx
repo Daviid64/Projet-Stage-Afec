@@ -5,7 +5,7 @@ import "./index.css";
 import Acceuil from "./pages/Acceuil.jsx";
 import ExplorationMetiers from "./pages/ExplorationMetiers.jsx";
 import LoginPage from "./pages/Login.jsx";
-import Register from "./pages/inscription.jsx";
+import Register from "./pages/Register.jsx";
 import API from "./api.js"
 import ForgotPasswordPage from "./pages/forgotPassword.jsx"
 import ResetPasswordPage from "./pages/ResetPassword.jsx";
