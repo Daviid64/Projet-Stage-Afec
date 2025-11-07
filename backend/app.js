@@ -16,14 +16,9 @@ app.use(cors({
 
 app.use(express.json());
 
-app.use("/users", UserRoute)
+app.use("/users", UserRoute);
 app.use("/admin", adminRoutes);
-app.use("/auth",authRoutes)
-
-app.get('/api/test',(req, res) => {
-res.json({message: 'Connexion backend OK'});
-});
-
+app.use("/auth",authRoutes);
 
 app.get('/verify/:token', (req, res) => {
   const { token } = req.params;

@@ -24,7 +24,20 @@ export const validateUser = async (req,res) => {
             return res.status(400).json({message: 'Status invalide'});
         }
 
+        const [userRows] = await db.query (
+            `SELECT u.first_name, u.email, r.name as role
+            FROM users u
+            LEFT JOIN user_role ur ON ur.user_id = u.id
+            LEFT JOIN role r ON ur.role_id = r.id
+            WHERE u.id = ?
+            `,
+            [id]
+        );
+        const user = userRows[0];
+        if (!user) return res.status(404).json({message: "Utilisateur introuvable"});
+
         await db.query('UPDATE users SET status = ? WHERE id = ?', [status,id]);
+        
         res.status(200).json({message: `Utilisateur ${status}`});
     }catch(error){
         res.status(500).json({message: error.message});

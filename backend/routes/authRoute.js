@@ -3,7 +3,7 @@ import UserService from '../services/UserService.js';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import nodemailer from 'nodemailer'
-import userController from '../controller/userController.js';
+// import userController from '../controller/userController.js';
 
 const router = express.Router();
 
@@ -65,7 +65,7 @@ router.post("/forgotPassword", async (req, res) => {
     },
   });
 
-  await transporter.sendMail({
+  transporter.sendMail({
     from: `"Support" <${process.env.EMAIL_USER}>`,
     to: email,
     subject: "Réinitialisation de votre mot de passe",
@@ -124,12 +124,25 @@ router.post("/reset-password", async (req, res) => {
 //Route d'inscription
 router.post("/register", async (req, res) => {
   try {
-    const {first_name, last_name, email, password, confirmPassword, agency_id } = req.body;
+    const {first_name, last_name, email, password, confirmPassword, agency_id, role } = req.body;
 
-    const existingUser = await UserService.findUserByEmail(email);
-    if(existingUser) {
-      return res.status(400).json({success: false, message: "Email déjà utilisé"});
-    }
+  if (password !== confirmPassword) {
+    return res.status(400).json({success: false, message: "Les mots de passe ne correspondent pas"});
+  }
+
+  if (!agency_id) {
+  return res.status(400).json({ success: false, message: "L'agence est obligatoire" });
+  }
+
+  if (!role) {
+  return res.status(400).json({ success: false, message: "Le rôle est obligatoire" });
+  }
+
+  const existingUser = await UserService.findUserByEmail(email);
+    
+  if(existingUser) {
+  return res.status(400).json({success: false, message: "Email déjà utilisé"});
+  }
 
     const {userId} = await UserService.createUser({
       first_name,
@@ -137,10 +150,17 @@ router.post("/register", async (req, res) => {
       email,
       password,
       confirmPassword,
-      agency_id
+      agency_id,
+      role
     });
 
-    return res.status(201).json({success: true, message: "Utilisateur créé avec succès", user: {id: userId, first_name, last_name, email, agency_id}});
+    return res.status(201).json({
+      success: true, 
+      message: 
+        role === "coordinateur"
+          ? "Compte coordinateur créé. En attente de validation par l'admin principal"
+          : "Compte stagiaire créé avec succès !",userId,
+    });
   } catch (error) {
     console.error("Erreur register", error);
     return res.status(500).json({success: false, message: "Erreur serveur"});

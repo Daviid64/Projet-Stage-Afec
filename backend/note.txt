@@ -22,7 +22,7 @@
 
         7- On met à jour le mot de passe de cet utilisateur dans la base de données.
 
-        8- Tout s’est bien passé ✅
+        8- Tout s’est bien passé 
            On répond au frontend avec un message de succès.
 
         9- Ce bloc “attrape” toutes les erreurs possibles :

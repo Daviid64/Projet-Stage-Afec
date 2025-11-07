@@ -13,17 +13,7 @@ const userController = {
         return res.status(400).json({ success: false, message: "L'agence est obligatoire !" });
       }
 
-       const { userId, verificationToken } = await UserService.createUser(req.body);
-
-      // const verificationLink = `${process.env.BACKEND_URL}/users/verify/${verificationToken}`.trim();
-      // console.log("Lien de vérification :", verificationLink);
-
-      // Envoi de l'email dans un try/catch séparé pour ne pas bloquer la création
-      // try {
-      //   await sendVerificationEmail(req.body.email, verificationLink);
-      // } catch (emailError) {
-      //   console.warn("L'email de vérification n'a pas pu être envoyé :", emailError.message);
-      // }
+       const { userId } = await UserService.createUser(req.body);
 
        return res.status(201).json({
          success: true,
@@ -62,14 +52,14 @@ const userController = {
   },
 
   // Récupérer tous les utilisateurs
-  getAll: async (req, res) => {
-    try {
-      const users = await UserService.getAllUsers();
-      return res.status(200).json({ success: true, users });
-    } catch (error) {
-      return res.status(400).json({ success: false, message: error.message });
-    }
-  },
+getAll: async (req, res) => {
+  try {
+    const users = await UserService.getAllUsers();
+    return res.status(200).json(users); // renvoie directement le tableau
+  } catch (error) {
+    return res.status(400).json({ success: false, message: error.message });
+  }
+},
 
   // Récupérer un utilisateur par ID
   getById: async (req, res) => {

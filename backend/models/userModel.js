@@ -6,9 +6,6 @@ const userModel = {
   create: async (userData, pool) => {
     const { first_name, last_name, email, password, role_id, verificationToken, agency_id } = userData;
 
-    if (!password) throw new Error("Le mot de passe est obligatoire");
-    if (!agency_id) throw new Error("L'agence est obligatoire");
-
     // Insertion utilisateur
     const sqlUser = `
       INSERT INTO users (first_name, last_name, email, password, status, verificationToken, agency_id, created_at, updated_at)

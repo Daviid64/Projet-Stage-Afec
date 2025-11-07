@@ -7,7 +7,7 @@ const UserService = {
 
   // Création du compte 
   createUser: async (userData) => {
-    const {  first_name, last_name, email, password,confirmPassword, agency_id } = userData;
+    const {  first_name, last_name, email, password,confirmPassword, agency_id, role } = userData;
 
     const existingUser = await userModel.findByEmail(email, pool);
     if (existingUser) {
@@ -22,6 +22,10 @@ const UserService = {
     // Token de vérification
     const verificationToken = crypto.randomBytes(32).toString('hex');
 
+    // Résolution du role_id depuis le rôle fourni
+    const role_id = await UserService.resolveRoleId(role);
+    console.log("role_id avant création :", role_id); // <--- debug
+
     // Création utilisateur avec agency_id
     const { userId } = await userModel.create({
       first_name,
@@ -29,7 +33,8 @@ const UserService = {
       email,
       password: hashedPassword,
       verificationToken,
-      agency_id
+      agency_id,
+      role_id
     }, pool);
 
     return { userId, verificationToken };
@@ -59,6 +64,11 @@ const UserService = {
     `;
     await pool.query(updateQuery, [user.id]);
     return true;
+  },
+
+  resolveRoleId: async (roleName) => {
+    const [rows] = await pool.query("SELECT id FROM role WHERE name = ?", [roleName]);
+    return rows.length ? rows[0].id : null;
   },
 
   getAllUsers: async () => {
