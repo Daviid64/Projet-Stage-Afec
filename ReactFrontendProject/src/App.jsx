@@ -2,22 +2,16 @@ import React, { useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 import "./App.css";
 import "./index.css";
-import Acceuil from "./pages/Acceuil.jsx";
+import Acceuil from "./pages/Home.jsx";
 import ExplorationMetiers from "./pages/ExplorationMetiers.jsx";
-import LoginPage from "./pages/Login.jsx";
-import Register from "./pages/Register.jsx";
+import LoginPage from "./components/Login.jsx";
+import Register from "./components/Register.jsx";
 import API from "./api.js"
-import ForgotPasswordPage from "./pages/forgotPassword.jsx"
-import ResetPasswordPage from "./pages/ResetPassword.jsx";
+import ForgotPasswordPage from "./components/forgotPassword.jsx"
+import ResetPasswordPage from "./components/ResetPassword.jsx";
+import AdminPage from "./pages/Admin.jsx"
 
 function App() {
-
-useEffect(() => {
-  API.get("/api/test")
-    .then((res)=> console.log("Réponse du backend :", res.data))
-    .catch((err) => console.error("Erreur :", err));
-}, [])
-
   return (
     <Router>
       <Routes>
@@ -29,6 +23,8 @@ useEffect(() => {
         <Route path="/forgotPassword" element={<ForgotPasswordPage />} />
 
         <Route path="/reset-password" element={<ResetPasswordPage />} />
+        
+        <Route path="/admin" element={<AdminPage />} />
 
         <Route path="/" element={<Acceuil />} />
 

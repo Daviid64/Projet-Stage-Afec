@@ -33,14 +33,14 @@ body, html {
   height: 250px;
   background-color: #355DA5;
   display: flex;
-  flex-direction: column; /* empiler logo + lien */
-  align-items: center; /* centrer horizontalement */
-  justify-content: center; /* centrer verticalement */
+  flex-direction: column; 
+  align-items: center;
+  justify-content: center; 
 }
 
 .header-logo {
-  height: 85%; /* Ajuste selon le rendu désiré */
-  margin-bottom: 5px; /* espace entre logo et lien */
+  height: 85%; 
+  margin-bottom: 5px; 
 }
 
 .nav-link {
@@ -83,17 +83,17 @@ body, html {
   color: #333;
   background-color: #f5f5f5;
   border-radius: 12px;       
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* effet léger d'ombre */
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); 
 }
 
 .main-content h2 {
-  font-size: 2rem;
+  font-size: 2.3em;
   color: #345da4;
   margin-bottom: 20px;
 }
 
 .main-content p {
-  font-size: 1.1rem;
+  font-size: 1.5rem;
   line-height: 1.6;
   color: #444;
   margin-bottom: 40px;
@@ -143,39 +143,81 @@ body, html {
 
       /* ---- PAGE CATEGORIE METIERS DU NUMERIQUE ---- */
 
+/* --- Section principale --- */
+.main-content {
+  text-align: center;
+  padding: 80px 20px;
+  background: linear-gradient(180deg, #f8faff 0%, #eef2f7 100%);
+  min-height: 80vh;
+}
+
+/* Titre et sous-titre */
+.main-title {
+  font-size: 2.2rem;
+  color: #1e2a44;
+  font-weight: 700;
+  margin-bottom: 10px;
+  letter-spacing: 0.5px;
+}
+
+.subtitle {
+  font-size: 1.1rem;
+  color: #5c6b82;
+  margin-bottom: 50px;
+}
+
+/* Grille des métiers */
 .metiers-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr); /* 3 colonnes */
-  gap: 2rem;
-  padding: 0 1.5rem;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 25px;
+  max-width: 1000px;
+  margin: 0 auto;
 }
 
-/* Centrer le dernier élément si seule sur la ligne */
-.metiers-grid > a:nth-last-child(1):nth-child(10) {
-  grid-column: 2 / 3; /* centre le 10ème bouton sur la grille 3 colonnes */
-}
-
-.metier-button {
+/* Carte d’un métier */
+.metier-card {
   display: flex;
-  justify-content: center;
   align-items: center;
-  min-height: 100px;
-  background: #345da4;
-  color: #fff;
-  font-size: 1.75rem;
-  padding: 15px ;
+  justify-content: center;
+  background: #ffffff;
+  color: #1e2a44;
+  border-radius: 16px;
   font-weight: 600;
-  text-align: center;
-  border-radius: 12px;
+  padding: 25px 15px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
   text-decoration: none;
-  transition: transform 0.2s, background 0.3s, box-shadow 0.3s;
+  transition: all 0.25s ease;
+  position: relative;
+  overflow: hidden;
 }
 
-.metier-button:hover {
-  background: #0056b3;
-  transform: translateY(-3px);
-  box-shadow: 0 8px 15px rgba(0,0,0,0.2);
+/* Animation légère au survol */
+.metier-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, #0078d7, #00b0ff);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  z-index: 0;
 }
+
+.metier-card:hover::before {
+  opacity: 0.1;
+}
+
+.metier-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
+}
+
+.metier-name {
+  position: relative;
+  z-index: 1;
+  font-size: 1.1rem;
+}
+
 
 
 .footer {

@@ -10,6 +10,7 @@ export default function Register() {
     email: "",
     password: "",
     confirmPassword: "",
+    role: "stagiaire",
   });
   const [message, setMessage] = useState(""); // pour afficher les messages
 
@@ -40,6 +41,7 @@ export default function Register() {
         email: formData.email,
         password: formData.password,
         confirmPassword: formData.confirmPassword,
+        role: formData.role,
       });
 
       if (response.data.success) {
@@ -127,6 +129,17 @@ export default function Register() {
           onChange={handleChange}
           required
         />
+
+        <select
+          className="login-input"
+          name="role"
+          value={formData.role}
+          onChange={handleChange}
+          required
+          >
+            <option value="stagiaire">Stagiaire</option>
+            <option value="coordinateur">Coordinateur</option>
+          </select>
 
         <button className="login-button" type="submit">
           S'inscrire
