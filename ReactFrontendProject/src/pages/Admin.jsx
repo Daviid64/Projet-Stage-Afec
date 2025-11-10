@@ -3,38 +3,79 @@ import { Link } from "react-router-dom";
 import "../App.css";
 import logoAfec from "../assets/logoAfec.png";
 import API from "../api.js";
+import "./Admin.css";
 
 function AdminPage() {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(false);
 
   // Charger la liste des utilisateurs
-  useEffect(() => {
-    const fetchUsers = async () => {
-      try {
-        const { data } = await API.get("/users");
-        setUsers(data);
-      } catch (err) {
-        console.error("Erreur lors du chargement des utilisateurs :", err);
-      }
-    };
-    fetchUsers();
-  }, []);
+ useEffect(() => {
+  const fetchUsers = async () => {
+    try {
+      const { data } = await API.get("/users");
 
-  // Changer le rôle d’un utilisateur
-  const handleChangeRole = async (id) => {
+      // Filtrer le super_admin correctement
+      const filteredUsers = data.filter(user => {
+        if (!user.roles) return true; // pas de rôle, ok
+        const rolesArray = user.roles.split(","); // convertir en tableau
+        return !rolesArray.includes("super_admin"); // exclure super_admin
+      });
+
+      setUsers(filteredUsers);
+
+    } catch (err) {
+      console.error("Erreur lors du chargement des utilisateurs :", err);
+    }
+  };
+  fetchUsers();
+}, []);
+
+
+  // // Changer le rôle d’un utilisateur
+  // const handleChangeRole = async (id) => {
+  //   setLoading(true);
+  //   try {
+  //     await API.patch(`/users/${id}/role`, { role_name: "coordinateur" });
+  //     setUsers((prev) =>
+  //       prev.map((user) =>
+  //         user.id === id ? { ...user, role_name: "coordinateur" } : user
+  //       )
+  //     );
+  //     alert("Utilisateur promu en coordinateur !");
+  //   } catch (err) {
+  //     console.error("Erreur :", err);
+  //     alert("Impossible de changer le rôle");
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+
+  const handleValidation = async (id, status) => {
+    if (!["approved", "rejected"].includes(status)){
+      alert("Status invalide");
+      return;
+    }
+
     setLoading(true);
     try {
-      await API.patch(`/users/${id}/role`, { role_name: "coordinateur" });
-      setUsers((prev) =>
-        prev.map((user) =>
-          user.id === id ? { ...user, role_name: "coordinateur" } : user
-        )
+      const token = localStorage.getItem("token");
+      await API.patch(
+        `/admin/users/${id}/validate`,
+        {status},
+        {headers: {Authorization: `Bearer ${token}`}}
       );
-      alert("Utilisateur promu en coordinateur !");
+
+      // Met à jour localement le tableau
+      setUsers((prevUsers) =>
+        prevUsers.map((u) =>
+        u.id === id ? { ...u, status: status} : u
+      )
+    );
+
+    alert(`Utilisateur ${status === "approved" ? "approuvé" : "rejeté"}`); 
     } catch (err) {
-      console.error("Erreur :", err);
-      alert("Impossible de changer le rôle");
+      console.error("Erreur lors de la validation:", err);
     } finally {
       setLoading(false);
     }
@@ -44,7 +85,6 @@ function AdminPage() {
     <div className="page-container">
       <header className="header-blue">
         <img src={logoAfec} alt="Logo AFEC" className="header-logo" />
-
         <nav className="header-nav">
           <Link to="/exploration" className="nav-link">
             Exploration des Métiers
@@ -62,34 +102,68 @@ function AdminPage() {
               <th>Email</th>
               <th>Statut</th>
               <th>Rôle</th>
+              <th>Dernière connexion</th>
+              <th>Date d'inscription</th>
               <th>Action</th>
             </tr>
           </thead>
           <tbody>
-  {Array.isArray(users) && users.length > 0 ? (
-    users.map((user) => (
-      <tr key={user.id}>
-        <td>{user.first_name} {user.last_name}</td>
-        <td>{user.email}</td>
-        <td>{user.status}</td>
-        <td>{user.role_name}</td>
-        <td>
-          <button
-            onClick={() => handleChangeRole(user.id)}
-            disabled={loading || user.role_name === "coordinateur"}
-          >
-            Promouvoir
-          </button>
-        </td>
-      </tr>
-    ))
-  ) : (
-    <tr>
-      <td colSpan="5">Aucun utilisateur trouvé</td>
-    </tr>
-  )}
-</tbody>
+            {users.length > 0 ? (
+              users.map((user)=> (
+                <tr key={user.id}>
+                  <td>{user.first_name} {user.last_name}</td>                  
+                  <td>{user.email}</td>
+                  <td>{user.status}</td>
+                  <td>{user.roles || "—"}</td>
 
+                  <td>
+                  {user.last_login
+                    ? new Date(user.last_login).toLocaleString("fr-FR", {
+                        dateStyle: "short",
+                        timeStyle: "short",
+                      })
+                      : "Jamais"}
+                  </td>
+
+                  <td>
+                  {user.created_at
+                  ? new Date(user.created_at).toLocaleDateString("fr-FR")
+                  : "—"}
+                  </td>
+
+
+                  <td>
+                    {user.status === "pending" ? (
+                      <>
+                        <button onClick={() => handleValidation(user.id, "approved")}
+                          disabled={loading}
+                          className="btn-approve"
+                          >
+                            Approuver
+                        </button>
+                        <button onClick={() => handleValidation(user.id, "rejected")}
+                          disabled={loading}
+                          className="btn-reject"
+                          >
+                            Rejeter
+                        </button>
+                      </>
+                    ) : (
+                      <span>
+                        {user.status === "approved"
+                        ? "Approuvé"
+                        : "Rejeté"}
+                      </span>
+                    )}
+                  </td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan="7">Aucun utilisateur trouvé</td>
+              </tr>
+            )}
+          </tbody>
         </table>
       </main>
 

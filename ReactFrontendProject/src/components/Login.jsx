@@ -1,11 +1,21 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import "./Login.css";
 
 export default function LoginPage() {
+  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
+
+  // Vérifie si le rôle contient super_admin
+  const isSuperAdmin = (roles) => {
+    if (!roles) return false;
+    if (Array.isArray(roles)) return roles.includes("super_admin");
+    if (typeof roles === "string") return roles.split(",").includes("super_admin");
+    return false;
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -17,28 +27,29 @@ export default function LoginPage() {
       });
 
       if (response.data.success) {
-        // Stocker le token pour les futures requêtes
-        localStorage.setItem("token", response.data.token);
-        localStorage.setItem("user", JSON.stringify(response.data.user));
-        setMessage("Connexion réussie !");
-        console.log("Utilisateur connecté :", response.data.user);
+        const user = response.data.user;
+        const token = response.data.token;
+
+        // Stocker les infos
+        localStorage.setItem("token", token);
+        localStorage.setItem("user", JSON.stringify(user));
+
+        console.log("Utilisateur connecté :", user);
 
         // Redirection selon le rôle
-        const role = response.data.user.roles?.[0];
-        if (role === "super_admin") window.location.href = "/admin";
-        else window.location.href = "/";
+        if (isSuperAdmin(user.roles)) {
+          console.log("Redirection vers /admin");
+          navigate("/admin", { replace: true });
+        } else {
+          console.log("Redirection vers /");
+          navigate("/", { replace: true });
+        }
       } else {
-        setMessage("erreur " + response.data.message);
+        setMessage("Erreur : " + (response.data.message || "Échec de connexion"));
       }
     } catch (err) {
-      console.error("Erreur login", err);
-
-      if (err.response && err.response.data && err.response.data.message) {
-      setMessage(err.response.data.message);
-      // console.log(err.response);
-      }  else {
-        setMessage("Erreur de connexion au serveur")
-      }
+      console.error("Erreur login:", err);
+      setMessage(err.response?.data?.message || "Erreur de connexion au serveur");
     }
   };
 
