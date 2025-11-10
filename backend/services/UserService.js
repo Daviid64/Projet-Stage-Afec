@@ -44,11 +44,13 @@ const UserService = {
   findUserByEmail: async (email, includePassword = false) => {
     const user = await userModel.findByEmail(email, pool);
 
-    // Récupérer le mot de passe uniquement si demandé
-    if (user && !includePassword) delete user.password;
+    if (!user) return null;
+
+    if (!includePassword) delete user.password;
 
     return user;
-  },
+},
+
 
   // Vérification par token
   verifyUserByToken: async (token) => {
@@ -72,10 +74,24 @@ const UserService = {
   },
 
   getAllUsers: async () => {
-    const users = await userModel.getAll(pool);
-    users.forEach(u => delete u.password);
-    return users;
-  },
+  const [users] = await pool.query(`
+    SELECT u.*, 
+           (SELECT GROUP_CONCAT(r.name) 
+            FROM user_role ur 
+            JOIN role r ON ur.role_id = r.id 
+            WHERE ur.user_id = u.id) AS roles
+    FROM users u
+    WHERE u.id NOT IN (
+        SELECT ur.user_id 
+        FROM user_role ur 
+        JOIN role r ON ur.role_id = r.id 
+        WHERE r.name = 'super_admin'
+    )
+  `);
+
+  users.forEach(u => delete u.password);
+  return users;
+},
 
   getUserById: async (id) => {
     const user = await userModel.getById(id, pool);
