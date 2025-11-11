@@ -79,8 +79,11 @@ const UserService = {
            (SELECT GROUP_CONCAT(r.name) 
             FROM user_role ur 
             JOIN role r ON ur.role_id = r.id 
-            WHERE ur.user_id = u.id) AS roles
+            WHERE ur.user_id = u.id) AS roles,
+          a.name AS agency_name,
+          a.region AS agency_region
     FROM users u
+    LEFT JOIN agencies a ON u.agency_id = a.id
     WHERE u.id NOT IN (
         SELECT ur.user_id 
         FROM user_role ur 
