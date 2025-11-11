@@ -9,17 +9,15 @@ function AdminPage() {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  // Charger la liste des utilisateurs
  useEffect(() => {
   const fetchUsers = async () => {
     try {
       const { data } = await API.get("/users");
 
-      // Filtrer le super_admin correctement
       const filteredUsers = data.filter(user => {
-        if (!user.roles) return true; // pas de rôle, ok
-        const rolesArray = user.roles.split(","); // convertir en tableau
-        return !rolesArray.includes("super_admin"); // exclure super_admin
+        if (!user.roles) return true; 
+        const rolesArray = user.roles.split(","); 
+        return !rolesArray.includes("super_admin"); 
       });
 
       setUsers(filteredUsers);
@@ -30,26 +28,6 @@ function AdminPage() {
   };
   fetchUsers();
 }, []);
-
-
-  // // Changer le rôle d’un utilisateur
-  // const handleChangeRole = async (id) => {
-  //   setLoading(true);
-  //   try {
-  //     await API.patch(`/users/${id}/role`, { role_name: "coordinateur" });
-  //     setUsers((prev) =>
-  //       prev.map((user) =>
-  //         user.id === id ? { ...user, role_name: "coordinateur" } : user
-  //       )
-  //     );
-  //     alert("Utilisateur promu en coordinateur !");
-  //   } catch (err) {
-  //     console.error("Erreur :", err);
-  //     alert("Impossible de changer le rôle");
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
 
   const handleValidation = async (id, status) => {
     if (!["approved", "rejected"].includes(status)){
@@ -101,6 +79,8 @@ function AdminPage() {
               <th>Nom</th>
               <th>Email</th>
               <th>Statut</th>
+              <th>Agence</th>
+              <th>Région</th>
               <th>Rôle</th>
               <th>Dernière connexion</th>
               <th>Date d'inscription</th>
@@ -114,6 +94,8 @@ function AdminPage() {
                   <td>{user.first_name} {user.last_name}</td>                  
                   <td>{user.email}</td>
                   <td>{user.status}</td>
+                  <td>{user.agency_name || "-"}</td>
+                  <td>{user.agency_region || "-"}</td>
                   <td>{user.roles || "—"}</td>
 
                   <td>

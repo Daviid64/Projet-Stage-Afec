@@ -1,3 +1,0 @@
-modifier Dax par Bordeaux
-
-implémenter les données de connexions stagiaire  

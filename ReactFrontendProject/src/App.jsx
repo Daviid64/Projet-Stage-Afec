@@ -9,6 +9,8 @@ import Register from "./components/Register.jsx";
 import ForgotPasswordPage from "./components/forgotPassword.jsx";
 import ResetPasswordPage from "./components/ResetPassword.jsx";
 import AdminPage from "./pages/Admin.jsx";
+import FrontendDescription from "./pages/Dev-Frontend.jsx"
+
 
 // 🔒 Composant de route protégée
 function ProtectedRoute({ children, allowedRoles }) {
@@ -49,6 +51,7 @@ function App() {
         {/* Routes publiques */}
         <Route path="/" element={<Acceuil />} />
         <Route path="/exploration" element={<ExplorationMetiers />} />
+        <Route path="/Dev-Frontend" element={<FrontendDescription />} />
 
         {/* Routes d’authentification */}
         <Route

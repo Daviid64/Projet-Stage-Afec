@@ -67,13 +67,6 @@ function Acceuil() {
           <Link to="/exploration" className="btn btn-blue">
             Exploration Métiers
           </Link>
-
-          {/* Si c’est un super_admin, ajouter un accès rapide à l’admin */}
-          {user?.roles?.includes("super_admin") && (
-            <Link to="/admin" className="btn btn-outline">
-              Accès Admin
-            </Link>
-          )}
         </div>
       </main>
 
