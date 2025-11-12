@@ -1,5 +1,6 @@
 import { useState } from "react";
-import axios from "axios"; // <-- n'oublie pas d'importer axios
+import { Link } from "react-router-dom";
+import axios from "axios"; 
 import "./Login.css";
 
 export default function Register() {
@@ -12,7 +13,7 @@ export default function Register() {
     confirmPassword: "",
     role: "stagiaire",
   });
-  const [message, setMessage] = useState(""); // pour afficher les messages
+  const [message, setMessage] = useState(""); 
 
   const agences = [
   { id: 1, name: "Afec Bayonne" },
@@ -37,7 +38,7 @@ export default function Register() {
       const response = await axios.post("http://localhost:5000/auth/register", {
         first_name: formData.firstName,
         last_name: formData.lastName,
-        agency_id: formData.agency, // selon ce que ton backend attend
+        agency_id: formData.agency, 
         email: formData.email,
         password: formData.password,
         confirmPassword: formData.confirmPassword,
@@ -47,7 +48,7 @@ export default function Register() {
       if (response.data.success) {
         setMessage("Inscription réussie !");
         console.log("Utilisateur créé :", response.data.user);
-        // Redirection si besoin
+       
         window.location.href = "/login";
       } else {
         setMessage(response.data.message || "Erreur lors de l'inscription");
@@ -146,6 +147,10 @@ export default function Register() {
         </button>
 
         {message && <p className="login-message">{message}</p>}
+
+      <p className="login-link">
+          Déjà un compte ? <Link to="/login">Connectez-vous ici</Link>
+      </p>
       </form>
     </div>
   );

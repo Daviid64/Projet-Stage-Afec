@@ -9,26 +9,26 @@ function AdminPage() {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(false);
 
- useEffect(() => {
-  const fetchUsers = async () => {
-    try {
-      const { data } = await API.get("/users");
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        const { data } = await API.get("/users");
 
-      const filteredUsers = data.filter(user => {
-        if (!user.roles) return true; 
-        const rolesArray = user.roles.split(","); 
-        return !rolesArray.includes("super_admin"); 
-      });
+        const filteredUsers = data.filter(user => {
+          if (!user.roles) return true; 
+          const rolesArray = user.roles.split(","); 
+          return !rolesArray.includes("super_admin") && !rolesArray.includes("coordinateur"); 
+        });
 
-      setUsers(filteredUsers);
+        setUsers(filteredUsers);
+      } catch (err) {
+        console.error("Erreur lors du chargement des utilisateurs :", err);
+      }
+    };
+    fetchUsers();
+  }, []);
 
-    } catch (err) {
-      console.error("Erreur lors du chargement des utilisateurs :", err);
-    }
-  };
-  fetchUsers();
-}, []);
-
+  // Approuver ou rejeter un utilisateur
   const handleValidation = async (id, status) => {
     if (!["approved", "rejected"].includes(status)){
       alert("Status invalide");
@@ -40,20 +40,38 @@ function AdminPage() {
       const token = localStorage.getItem("token");
       await API.patch(
         `/admin/users/${id}/validate`,
-        {status},
-        {headers: {Authorization: `Bearer ${token}`}}
+        { status },
+        { headers: { Authorization: `Bearer ${token}` } }
       );
 
-      // Met à jour localement le tableau
-      setUsers((prevUsers) =>
-        prevUsers.map((u) =>
-        u.id === id ? { ...u, status: status} : u
-      )
-    );
+      setUsers(prevUsers =>
+        prevUsers.map(u => (u.id === id ? { ...u, status } : u))
+      );
 
-    alert(`Utilisateur ${status === "approved" ? "approuvé" : "rejeté"}`); 
+      alert(`Utilisateur ${status === "approved" ? "approuvé" : "rejeté"}`);
     } catch (err) {
       console.error("Erreur lors de la validation:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Supprimer un utilisateur
+  const handleDelete = async (id) => {
+    if (!window.confirm("Êtes-vous sûr de vouloir supprimer ce compte ?")) return;
+
+    setLoading(true);
+    try {
+      const token = localStorage.getItem("token");
+      await API.delete(`/admin/users/${id}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+
+      setUsers(prevUsers => prevUsers.filter(u => u.id !== id));
+      alert("Utilisateur supprimé avec succès !");
+    } catch (err) {
+      console.error("Erreur lors de la suppression :", err);
+      alert("Impossible de supprimer l'utilisateur.");
     } finally {
       setLoading(false);
     }
@@ -64,9 +82,8 @@ function AdminPage() {
       <header className="header-blue">
         <img src={logoAfec} alt="Logo AFEC" className="header-logo" />
         <nav className="header-nav">
-          <Link to="/exploration" className="nav-link">
-            Exploration des Métiers
-          </Link>
+          <Link to="/Home" className="nav-link">Accueil</Link>
+          <Link to="/exploration" className="nav-link"> Exploration des Métiers</Link>
         </nav>
       </header>
 
@@ -85,64 +102,74 @@ function AdminPage() {
               <th>Dernière connexion</th>
               <th>Date d'inscription</th>
               <th>Action</th>
+              <th>Supprimer</th>
             </tr>
           </thead>
           <tbody>
             {users.length > 0 ? (
-              users.map((user)=> (
+              users.map((user) => (
                 <tr key={user.id}>
-                  <td>{user.first_name} {user.last_name}</td>                  
+                  <td>{user.first_name} {user.last_name}</td>
                   <td>{user.email}</td>
                   <td>{user.status}</td>
                   <td>{user.agency_name || "-"}</td>
                   <td>{user.agency_region || "-"}</td>
                   <td>{user.roles || "—"}</td>
-
                   <td>
-                  {user.last_login
-                    ? new Date(user.last_login).toLocaleString("fr-FR", {
-                        dateStyle: "short",
-                        timeStyle: "short",
-                      })
+                    {user.last_login
+                      ? new Date(user.last_login).toLocaleString("fr-FR", {
+                          dateStyle: "short",
+                          timeStyle: "short",
+                        })
                       : "Jamais"}
                   </td>
-
                   <td>
-                  {user.created_at
-                  ? new Date(user.created_at).toLocaleDateString("fr-FR")
-                  : "—"}
+                    {user.created_at
+                      ? new Date(user.created_at).toLocaleDateString("fr-FR")
+                      : "—"}
                   </td>
-
 
                   <td>
                     {user.status === "pending" ? (
                       <>
-                        <button onClick={() => handleValidation(user.id, "approved")}
+                        <button
+                          onClick={() => handleValidation(user.id, "approved")}
                           disabled={loading}
                           className="btn-approve"
-                          >
-                            Approuver
+                        >
+                          Approuver
                         </button>
-                        <button onClick={() => handleValidation(user.id, "rejected")}
+                        <button
+                          onClick={() => handleValidation(user.id, "rejected")}
                           disabled={loading}
                           className="btn-reject"
-                          >
-                            Rejeter
+                        >
+                          Rejeter
                         </button>
                       </>
                     ) : (
                       <span>
-                        {user.status === "approved"
-                        ? "Approuvé"
-                        : "Rejeté"}
+                        {user.status === "approved" ? "Approuvé" : "Rejeté"}
                       </span>
+                    )}
+                  </td>
+
+                  <td>
+                    {(!user.roles || !user.roles.includes("super_admin")) && (
+                      <button
+                        onClick={() => handleDelete(user.id)}
+                        disabled={loading}
+                        className="btn-delete"
+                      >
+                        Supprimer
+                      </button>
                     )}
                   </td>
                 </tr>
               ))
             ) : (
               <tr>
-                <td colSpan="7">Aucun utilisateur trouvé</td>
+                <td colSpan="10">Aucun utilisateur trouvé</td>
               </tr>
             )}
           </tbody>

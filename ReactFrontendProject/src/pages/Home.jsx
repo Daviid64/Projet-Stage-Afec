@@ -39,15 +39,11 @@ function Acceuil() {
           </Link>
 
           {/* Affiche le bouton de déconnexion si connecté */}
-          {user ? (
+          
             <button onClick={handleLogout} className="btn-logout">
               Déconnexion
             </button>
-          ) : (
-            <Link to="/login" className="nav-link">
-              Connexion
-            </Link>
-          )}
+
         </nav>
       </header>
 

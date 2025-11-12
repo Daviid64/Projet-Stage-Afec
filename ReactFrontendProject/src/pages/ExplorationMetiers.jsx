@@ -27,7 +27,7 @@ function ExplorationMetier() {
       <header className="header-blue">
         <img src={logoAfec} alt="Logo AFEC" className="header-logo" />
         <nav className="header-nav">
-          <Link to="/" className="nav-link">Accueil</Link>
+          <Link to="/Home" className="nav-link">Accueil</Link>
         </nav>
       </header>
 

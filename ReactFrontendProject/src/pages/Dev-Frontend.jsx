@@ -43,9 +43,9 @@ function FrontendDescription() {
 
           <h3>Compétences techniques et soft skills requises</h3>
           <ul>
-            <li>HTML, CSS, JavaScript</li>
-            <li>Créativité, rigueur, persévérance</li>
-            <li>Veille technologique pour rester à jour</li>
+            <li>- HTML, CSS, JavaScript</li>
+            <li>- Créativité, rigueur, persévérance</li>
+            <li>- Veille technologique pour rester à jour</li>
           </ul>
 
           <h3>Formations possibles et niveaux d’études</h3>

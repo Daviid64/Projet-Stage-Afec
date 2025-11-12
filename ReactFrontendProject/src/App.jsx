@@ -11,7 +11,6 @@ import ResetPasswordPage from "./components/ResetPassword.jsx";
 import AdminPage from "./pages/Admin.jsx";
 import FrontendDescription from "./pages/Dev-Frontend.jsx"
 
-
 // 🔒 Composant de route protégée
 function ProtectedRoute({ children, allowedRoles }) {
   const token = localStorage.getItem("token");
@@ -33,7 +32,7 @@ function RedirectIfLoggedIn({ children }) {
   const token = localStorage.getItem("token");
   const user = JSON.parse(localStorage.getItem("user") || "{}");
 
-  if (token && user.roles?.includes("super_admin")) {
+  if (token && user.roles?.some(role => ["super_admin", "coordinateur"].includes(role))) {
     return <Navigate to="/admin" replace />;
   }
 
@@ -49,7 +48,7 @@ function App() {
     <Router>
       <Routes>
         {/* Routes publiques */}
-        <Route path="/" element={<Acceuil />} />
+        <Route path="/Home" element={<Acceuil />} />
         <Route path="/exploration" element={<ExplorationMetiers />} />
         <Route path="/Dev-Frontend" element={<FrontendDescription />} />
 
@@ -63,7 +62,7 @@ function App() {
           }
         />
         <Route
-          path="/register"
+          path="/"
           element={
             <RedirectIfLoggedIn>
               <Register />
@@ -83,7 +82,7 @@ function App() {
         <Route
           path="/admin"
           element={
-            <ProtectedRoute allowedRoles={["super_admin"]}>
+            <ProtectedRoute allowedRoles={["super_admin","coordinateur"]}>
               <AdminPage />
             </ProtectedRoute>
           }

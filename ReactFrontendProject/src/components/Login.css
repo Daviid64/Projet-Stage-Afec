@@ -86,3 +86,23 @@
         padding: 1.5rem;
     }
 }
+
+/* Lien "Déjà un compte ? Connectez-vous" */
+.login-form p.login-link {
+    text-align: center;
+    margin-top: 1rem;
+    font-size: 0.9rem;
+}
+
+.login-form p.login-link a {
+    color: #007bff;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.3s ease;
+}
+
+.login-form p.login-link a:hover {
+    color: #0056b3;
+    text-decoration: underline;
+}
+
