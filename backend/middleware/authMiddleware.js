@@ -20,35 +20,44 @@ export const verifyToken = (req, res, next) => {
 };
 
 export const authorizeRole = (...allowedRoles) => {
+    const normalizedAllowedRoles = allowedRoles.map(r => r.toLowerCase().trim());
     return async (req, res, next) => {
         try {
             const userId = req.user.id;
-
-            // Récupère les rôles du user depuis la base
             const [rows] = await db.query(
-                `
-                SELECT r.name AS role_name
-                FROM user_role ur
-                JOIN role r ON ur.role_id = r.id
-                WHERE ur.user_id = ?
-                `,
+                `SELECT r.name AS role_name
+                 FROM user_role ur
+                 JOIN role r ON ur.role_id = r.id
+                 WHERE ur.user_id = ?`,
                 [userId]
             );
 
-            const userRoles = rows.map(r => r.role_name);
+            const userRoles = rows.map(r => r.role_name.toLowerCase().trim());
 
-            // Vérifie si le user a au moins un rôle autorisé
-            const hasAccess = userRoles.some(role => allowedRoles.includes(role));
+            const hasAccess = userRoles.some(role => normalizedAllowedRoles.includes(role));
             if (!hasAccess) {
                 return res.status(403).json({ message: "Accès refusé : rôle non autorisé" });
             }
 
-            // Stocke les rôles du user pour un usage ultérieur
             req.user.roles = userRoles;
             next();
         } catch (error) {
-            console.error("Erreur dans le middleware authorizeRole:", error);
+            console.error("Erreur dans authorizeRole:", error);
             res.status(500).json({ message: "Erreur serveur pendant la vérification du rôle" });
         }
     };
 };
+
+
+export const verifyAdminOrCoordinator = (req, res, next) => {
+  const user = req.user; // doit être rempli par verifyToken
+  if (!user || !user.roles) return res.status(403).json({ message: "Accès refusé" });
+
+  const roles = Array.isArray(user.roles) ? user.roles : user.roles.split(",");
+  if (!roles.includes("super_admin") && !roles.includes("coordinateur")) {
+    return res.status(403).json({ message: "Accès refusé" });
+  }
+
+  next();
+};
+

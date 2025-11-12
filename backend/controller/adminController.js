@@ -63,3 +63,40 @@ export const validateUser = async (req,res) => {
         res.status(500).json({message: error.message});
     }
 };
+
+export const deleteUser = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // Vérifier que l'utilisateur existe
+    const [userRows] = await db.query(
+      `SELECT u.id, u.first_name, u.email, 
+              COALESCE(GROUP_CONCAT(DISTINCT r.name SEPARATOR ', '), '') AS role_name
+       FROM users u
+       LEFT JOIN user_role ur ON ur.user_id = u.id
+       LEFT JOIN role r ON ur.role_id = r.id
+       WHERE u.id = ?`,
+      [id]
+    );
+
+    const user = userRows[0];
+    if (!user) {
+      return res.status(404).json({ message: "Utilisateur introuvable" });
+    }
+
+    // // Interdire la suppression des super_admin ou coordinateur
+    // const roles = user.role_name.split(",").map(r => r.trim());
+    // if (roles.includes("super_admin") || roles.includes("coordinateur")) {
+    //   return res.status(403).json({ message: "Impossible de supprimer cet utilisateur" });
+    // }
+
+    // Suppression de l'utilisateur
+    await db.query(`DELETE FROM users WHERE id = ?`, [id]);
+
+    res.status(200).json({ message: "Utilisateur supprimé avec succès" });
+
+  } catch (err) {
+    console.error("Erreur suppression utilisateur :", err);
+    res.status(500).json({ message: "Erreur serveur", error: err.message });
+  }
+};
