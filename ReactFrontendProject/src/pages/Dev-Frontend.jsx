@@ -11,9 +11,8 @@ function FrontendDescription() {
       <header className="header-blue">
         <img src={logoAfec} alt="Logo AFEC" className="header-logo" />
         <nav className="header-nav">
-          <Link to="/exploration" className="nav-link">
-            Exploration des Métiers
-          </Link>
+          <Link to="/Home" className="nav-link">Accueil</Link>
+          <Link to="/exploration" className="nav-link"> Exploration des Métiers </Link> 
         </nav>
       </header>
 
@@ -63,20 +62,20 @@ function FrontendDescription() {
         <section>
           <h2>Liste de tâches ou responsabilités typiques</h2>
           <ul>
-            <li>Concevoir et mettre en œuvre l'interface utilisateur d'un site ou d'une application</li>
-            <li>Optimiser l'ergonomie et la fluidité pour offrir la meilleure navigation possible</li>
-            <li>Intégrer les contenus (images, textes) et respecter la mise en forme des designers</li>
-            <li>Veiller au respect des standards du web et des normes d'accessibilité</li>
-            <li>Effectuer une veille technologique régulière</li>
+            <li>- Concevoir et mettre en œuvre l'interface utilisateur d'un site ou d'une application</li>
+            <li>- Optimiser l'ergonomie et la fluidité pour offrir la meilleure navigation possible</li>
+            <li>- Intégrer les contenus (images, textes) et respecter la mise en forme des designers</li>
+            <li>- Veiller au respect des standards du web et des normes d'accessibilité</li>
+            <li>- Effectuer une veille technologique régulière</li>
           </ul>
         </section>
 
         <section>
           <h2>Outils, logiciels ou technologies les plus utilisés</h2>
           <ul>
-            <li>HTML, CSS, JavaScript</li>
-            <li>Frameworks JavaScript (ex: React)</li>
-            <li>Outils de versioning comme GitHub</li>
+            <li>- HTML, CSS, JavaScript</li>
+            <li>- Frameworks JavaScript (ex: React)</li>
+            <li>- Outils de versioning comme GitHub</li>
           </ul>
         </section>
 
@@ -97,8 +96,13 @@ function FrontendDescription() {
 
       {/* Footer */}
       <footer className="footer">
-        <p>© 2025 AFEC - Tous droits réservés</p>
-      </footer>
+          <p>© 2025 AFEC - Tous droits réservés</p>
+            <p>
+              <Link to="/mentions-legales">Mentions légales</Link> |{" "}
+              <Link to="/privacy-policy">Politique de confidentialité</Link> |{" "}
+              <Link to="/cookies">Gestion des cookies</Link>
+            </p>
+        </footer>
     </div>
   );
 }

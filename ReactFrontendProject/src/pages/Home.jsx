@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "../App.css";
 import logoAfec from "../assets/logoAfec.png";
+import RGPDCookieBanner from "../components/RGPDCookieBanner.jsx";
 
 function Acceuil() {
   const navigate = useNavigate();
@@ -68,7 +69,14 @@ function Acceuil() {
 
       <footer className="footer">
         <p>© 2025 AFEC - Tous droits réservés</p>
+          <p>
+            <Link to="/mentions-legales">Mentions légales</Link> |{" "}
+            <Link to="/privacy-policy">Politique de confidentialité</Link> |{" "}
+            <Link to="/cookies">Gestion des cookies</Link>
+          </p>
       </footer>
+
+      <RGPDCookieBanner />
     </div>
   );
 }

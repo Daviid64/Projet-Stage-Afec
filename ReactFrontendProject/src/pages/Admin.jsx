@@ -17,7 +17,7 @@ function AdminPage() {
         const filteredUsers = data.filter(user => {
           if (!user.roles) return true; 
           const rolesArray = user.roles.split(","); 
-          return !rolesArray.includes("super_admin") && !rolesArray.includes("coordinateur"); 
+          return !rolesArray.includes("super_admin"); 
         });
 
         setUsers(filteredUsers);
@@ -176,9 +176,15 @@ function AdminPage() {
         </table>
       </main>
 
-      <footer className="footer">
-        <p>© 2025 AFEC - Tous droits réservés</p>
-      </footer>
+<footer className="footer">
+    <p>© 2025 AFEC - Tous droits réservés</p>
+      <p>
+        <Link to="/mentions-legales">Mentions légales</Link> |{" "}
+        <Link to="/privacy-policy">Politique de confidentialité</Link> |{" "}
+        <Link to="/cookies">Gestion des cookies</Link>
+      </p>
+</footer>
+
     </div>
   );
 }
