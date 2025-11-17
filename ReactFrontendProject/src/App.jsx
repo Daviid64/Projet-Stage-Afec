@@ -25,33 +25,41 @@ import ExpertCybersecurite from "./pages/Expert-Cybersecurite.jsx";
 import AdministrateurReseau from "./pages/Administrateur-Reseau.jsx";
 import DeveloppeurIA from "./pages/Developpeur-IA.jsx";
 
-// 🔒 Composant de route protégée
-function ProtectedRoute({ children, allowedRoles }) {
+// Protège toutes les pages nécessitant la connexion
+function ProtectedRoute({ children }) {
   const token = localStorage.getItem("token");
-  const user = JSON.parse(localStorage.getItem("user") || "{}");
 
   if (!token) {
     return <Navigate to="/login" replace />;
   }
 
-  if (allowedRoles && !allowedRoles.some(role => user.roles?.includes(role))) {
-    return <Navigate to="/" replace />;
+  return children;
+}
+
+// Protège uniquement les pages admin
+function AdminRoute({ children }) {
+  const token = localStorage.getItem("token");
+  const user = JSON.parse(localStorage.getItem("user") || "{}");
+
+  if (!token) return <Navigate to="/login" replace />;
+
+  if (!user.roles?.includes("super_admin") && !user.roles?.includes("coordinateur")) {
+    return <Navigate to="/Home" replace />;
   }
 
   return children;
 }
 
-// 🔁 Redirige si déjà connecté
+// Empêche les utilisateurs connectés d'accéder à Register ou Login
 function RedirectIfLoggedIn({ children }) {
   const token = localStorage.getItem("token");
   const user = JSON.parse(localStorage.getItem("user") || "{}");
 
-  if (token && user.roles?.some(role => ["super_admin", "coordinateur"].includes(role))) {
-    return <Navigate to="/admin" replace />;
-  }
-
   if (token) {
-    return <Navigate to="/" replace />;
+    if (user.roles?.includes("super_admin") || user.roles?.includes("coordinateur")) {
+      return <Navigate to="/admin" replace />;
+    }
+    return <Navigate to="/Home" replace />;
   }
 
   return children;
@@ -61,24 +69,25 @@ function App() {
   return (
     <Router>
       <Routes>
-        {/* Routes publiques */}
-        <Route path="/Home" element={<Acceuil />} />
-        <Route path="/exploration" element={<ExplorationMetiers />} />
-        <Route path="/Dev-Frontend" element={<FrontendDescription />} />
-        <Route path="/Dev-Backend" element={<BackendDescription />} />
-        <Route path="/Dev-Fullstack" element={<FullstackDescription />} />
-        <Route path="/Intégrateur-Web" element={<IntegrateurWebDescription />} />
-        <Route path="/Scrum-Master" element={<ScrumMasterDescription />} />
-        <Route path="/UX-UI" element={<UXUIDesignerDescription />} />
-        <Route path="/Graphiste" element={<GraphisteMotionDesigner />} />
-        <Route path="/Product-Owner" element={<ProductOwner />} />
-        <Route path="/Data-Scientist" element={<DataScientist />} />
-        <Route path="/Data-Analyst" element={<DataAnalyst />} />
-        <Route path="/Expert-Cybersécurité" element={<ExpertCybersecurite />} />
-        <Route path="/Administrateur-Réseau" element={<AdministrateurReseau />} />
-        <Route path="/Développeur-IA" element={<DeveloppeurIA />} />
 
-        {/* Routes d’authentification */}
+        {/* Routes protégées (utilisateur connecté obligatoire) */}
+        <Route path="/Home" element={<ProtectedRoute><Acceuil /></ProtectedRoute>} />
+        <Route path="/exploration" element={<ProtectedRoute><ExplorationMetiers /></ProtectedRoute>} />
+        <Route path="/Dev-Frontend" element={<ProtectedRoute><FrontendDescription /></ProtectedRoute>} />
+        <Route path="/Dev-Backend" element={<ProtectedRoute><BackendDescription /></ProtectedRoute>} />
+        <Route path="/Dev-Fullstack" element={<ProtectedRoute><FullstackDescription /></ProtectedRoute>} />
+        <Route path="/Intégrateur-Web" element={<ProtectedRoute><IntegrateurWebDescription /></ProtectedRoute>} />
+        <Route path="/Scrum-Master" element={<ProtectedRoute><ScrumMasterDescription /></ProtectedRoute>} />
+        <Route path="/UX-UI" element={<ProtectedRoute><UXUIDesignerDescription /></ProtectedRoute>} />
+        <Route path="/Graphiste" element={<ProtectedRoute><GraphisteMotionDesigner /></ProtectedRoute>} />
+        <Route path="/Product-Owner" element={<ProtectedRoute><ProductOwner /></ProtectedRoute>} />
+        <Route path="/Data-Scientist" element={<ProtectedRoute><DataScientist /></ProtectedRoute>} />
+        <Route path="/Data-Analyst" element={<ProtectedRoute><DataAnalyst /></ProtectedRoute>} />
+        <Route path="/Expert-Cybersécurité" element={<ProtectedRoute><ExpertCybersecurite /></ProtectedRoute>} />
+        <Route path="/Administrateur-Réseau" element={<ProtectedRoute><AdministrateurReseau /></ProtectedRoute>} />
+        <Route path="/Développeur-IA" element={<ProtectedRoute><DeveloppeurIA /></ProtectedRoute>} />
+
+        {/* Routes de connexion/inscription */}
         <Route
           path="/login"
           element={
@@ -87,6 +96,7 @@ function App() {
             </RedirectIfLoggedIn>
           }
         />
+
         <Route
           path="/"
           element={
@@ -95,30 +105,24 @@ function App() {
             </RedirectIfLoggedIn>
           }
         />
-        <Route
-          path="/forgotPassword"
-          element={<ForgotPasswordPage />}
-        />
-        <Route
-          path="/reset-password"
-          element={<ResetPasswordPage />}
-        />
 
-        {/* Route protégée pour admin */}
+        <Route path="/forgotPassword" element={<ForgotPasswordPage />} />
+        <Route path="/reset-password" element={<ResetPasswordPage />} />
+
+        {/* Route protégée admin */}
         <Route
           path="/admin"
           element={
-            <ProtectedRoute allowedRoles={["super_admin","coordinateur"]}>
+            // <AdminRoute>
               <AdminPage />
-            </ProtectedRoute>
+            // </AdminRoute>
           }
         />
 
-          <Route path="/admin" element={<AdminPage />} />
-          <Route path="/mentions-legales" element={<MentionsLegales />} />
-          <Route path="/privacy-policy" element={<PolitiqueConfidentialite />} />
-          {/* <Route path="/cookies" element={<CookiesPage />} /> */}
-      
+        {/* Routes publiques */}
+        <Route path="/mentions-legales" element={<MentionsLegales />} />
+        <Route path="/privacy-policy" element={<PolitiqueConfidentialite />} />
+
       </Routes>
     </Router>
   );

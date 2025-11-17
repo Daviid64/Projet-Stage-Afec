@@ -14,7 +14,7 @@ export default function LoginPage() {
     if (!roles) return false;
     const roleArray = Array.isArray(roles)
     ? roles
-    : roles.split(",").map((r) => r.trim());
+    : roles.split(",").map((r) => r.trim()); //pour supprimer les espaces 
     return roleArray.some((role) => allowedRoles.includes(role));
   };
 
@@ -34,16 +34,11 @@ export default function LoginPage() {
       localStorage.setItem("token", token);
       localStorage.setItem("user", JSON.stringify(user));
 
-      console.log("Utilisateur connecté:", user);
-      console.log("Rôles de l'utilisateur :", user.roles);
+      // console.log("Utilisateur connecté:", user);
+      // console.log("Rôles de l'utilisateur :", user.roles);
 
-      if (hasRole(user.roles, ["super_admin","coordinateur"])) {
-        console.log("Redirection vers /admin");
-        navigate("/admin", {replace:true});
-      } else {
-        console.log("Redirection vers /");
-        navigate("/", {replace: true});
-      }
+      navigate("/", {replace: true});
+      
     } else {
       setMessage("Erreur:" + (response.data.message || "Échec de connexion"));
     }

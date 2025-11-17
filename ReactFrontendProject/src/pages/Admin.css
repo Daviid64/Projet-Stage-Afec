@@ -6,9 +6,9 @@ margin-right: 3px;
 
 /* Conteneur principal */
 .main-content {
-  max-width: 1200px;       
+  max-width: 1350px;       
   margin: 2rem auto; 
-  padding: 2rem;
+  padding: 1rem;
   background-color: #f9fafb;
   flex: 1;
   min-height: calc(100vh - 120px);

@@ -101,7 +101,6 @@ function GraphisteMotionDesigner() {
         <p>
           <Link to="/mentions-legales">Mentions légales</Link> |{" "}
           <Link to="/privacy-policy">Politique de confidentialité</Link> |{" "}
-          <Link to="/cookies">Gestion des cookies</Link>
         </p>
       </footer>
     </div>

@@ -21,10 +21,13 @@ const MentionsLegales = () => {
       <section>
         <h2>Éditeur du site</h2>
         <p>
-          Nom du centre de formation : <strong>Ton Centre de Formation</strong><br />
-          Adresse : <em>Adresse complète du centre</em><br />
-          Email : <a href="mailto:contact@centre.fr">contact@centre.fr</a><br />
-          Téléphone : <em>Numéro de contact</em>
+          Nom du centre de formation :<strong> AFEC Bayonne </strong><br />
+          Adresse : <em>8 Impasse d'Atchinetche 64100 Bayonne</em><br />
+          Email : <a href="mailto:bayonne@afec.fr">bayonne@afec.fr</a><br />
+          Téléphone : <em> 05 59 59 08 44</em><br /><br />
+          Nom du concepteur : <em> Oguihandy </em><br />
+          Prénom du concepteur : <em> David </em>
+          Fonction du concepteur : <em> Stagiaire pour la conception de ce site pour l'Afec </em>
         </p>
       </section>
 
@@ -41,16 +44,20 @@ const MentionsLegales = () => {
       <section>
         <h2>Responsable de la publication</h2>
         <p>
-          Nom : <em>Nom du responsable</em><br />
-          Fonction : <em>Fonction dans le centre</em><br />
-          Email : <a href="mailto:responsable@centre.fr">responsable@centre.fr</a>
+          Nom : <em>Drutel</em><br />
+          Prénom : <em>Isabelle</em><br />
+          Fonction : <em>Directrice de l'AFEC</em><br />
+          Email : <a href="mailto:bayonne@afec.fr">bayonne@afec.fr</a>
         </p>
       </section>
 
       <section>
         <h2>Propriété intellectuelle</h2>
         <p>
-          Tous les contenus présents sur ce site (textes, images, logos, code) sont la propriété du centre de formation ou de leurs auteurs respectifs et ne peuvent être reproduits sans autorisation.
+          Les marques, logos, signes ainsi que tous les contenus du site (textes, images, son…) font l’objet d’une protection par le Code de la propriété intellectuelle et plus particulièrement par le droit d’auteur.
+          L’Utilisateur doit solliciter l’autorisation préalable du site pour toute reproduction, publication, copie des différents contenus. Il s’engage à une utilisation des contenus du site dans un cadre strictement privé, toute utilisation à des fins commerciales et publicitaires est strictement interdite.
+          Toute représentation totale ou partielle de ce site par quelque procédé que ce soit, sans l’autorisation express de l’exploitant du site Internet constituerait une contrefaçon sanctionnée par l’article L 335-2 et suivants du Code de la propriété intellectuelle.
+          Il est rappelé conformément à l’article L122-5 du Code de propriété intellectuelle que l’Utilisateur qui reproduit, copie ou publie le contenu protégé doit citer l’auteur et sa source.
         </p>
       </section>
 
