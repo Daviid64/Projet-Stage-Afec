@@ -73,7 +73,7 @@ Découvrez, apprenez et construisez votre parcours avec l’AFEC.</p>
       </main>
 
       <footer className="footer">
-        <p>© 2025 AFEC - Tous droits réservés</p>
+        <p>© 2025 AFEC - Tous droits réservés |{" "}</p>
         <p>
           <Link to="/mentions-legales">Mentions légales</Link> |{" "}
           <Link to="/privacy-policy">Politique de confidentialité</Link> |{" "}

@@ -52,9 +52,6 @@ function ExplorationMetier() {
         <img src={logoAfec} alt="Logo AFEC" className="header-logo" />
         <nav className="header-nav">
           <Link to="/Home" className="nav-link">Accueil</Link>
-          <button onClick={handleLogout} className="btn-logout">
-            Déconnexion
-          </button>
         </nav>
       </header>
 
@@ -76,7 +73,7 @@ function ExplorationMetier() {
 
       {/* FOOTER conservé */}
       <footer className="footer">
-        <p>© 2025 AFEC - Tous droits réservés</p>
+        <p>© 2025 AFEC - Tous droits réservés |{" "}</p>
           <p>
             <Link to="/mentions-legales">Mentions légales</Link> |{" "}
             <Link to="/privacy-policy">Politique de confidentialité</Link> |{" "}
