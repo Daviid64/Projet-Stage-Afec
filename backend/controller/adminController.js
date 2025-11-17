@@ -1,77 +1,50 @@
 import db from "../config/db.js";
 
-export const getAllUsers =async (req,res) => {
-    try {
-        const [users] = await db.query(
-            `SELECT 
-                u.id, 
-                u.first_name, 
-                u.last_name, 
-                u.email, 
-                u.status,
-                u.created_at,
-                u.last_login,
-                COALESCE(GROUP_CONCAT(DISTINCT r.name SEPARATOR ', '), '') AS role_name 
-            FROM users u
-            LEFT JOIN user_role ur ON ur.user_id = u.id
-            LEFT JOIN role r ON ur.role_id = r.id
-            GROUP BY 
-            u.id, 
-            u.first_name, 
-            u.last_name, 
-            u.email, 
-            u.status, 
-            u.created_at, 
-            u.last_login
-            ORDER BY u.created_at DESC 
-        `);
-        res.json(users);
-    } catch (err) {
-        res.status(500).json({message: "Erreur serveur", error: err.message});
-    }
+export const getAllUsers = async (req, res) => {
+  try {
+    const [users] = await db.query(
+      `SELECT 
+        u.id, 
+        u.first_name, 
+        u.last_name, 
+        u.email, 
+        u.status,
+        u.created_at,
+        u.last_login,
+        COALESCE(GROUP_CONCAT(DISTINCT r.name SEPARATOR ', '), '') AS role_name 
+      FROM users u
+      LEFT JOIN user_role ur ON ur.user_id = u.id
+      LEFT JOIN role r ON ur.role_id = r.id
+      GROUP BY 
+        u.id, 
+        u.first_name, 
+        u.last_name, 
+        u.email, 
+        u.status, 
+        u.created_at, 
+        u.last_login
+      ORDER BY u.created_at DESC`
+    );
+
+    res.status(200).json(users);
+  } catch (err) {
+    res.status(500).json({ message: "Erreur interne" });
+  }
 };
 
-export const validateUser = async (req,res) => {
-    try {
-        const {id} = req.params;
-        const {status} = req.body; //'approved' ou 'rejected' et pending
 
-        // console.log(!['approved','rejected'].includes(status)); // A rajouter 
-        // console.log(status)
-        
-        if(!['approved','rejected'].includes(status)) {
-            return res.status(400).json({message: 'Status invalide'});
-        }
 
-        const [userRows] = await db.query (
-            `SELECT u.first_name, u.email, r.name as role
-            FROM users u
-            LEFT JOIN user_role ur ON ur.user_id = u.id
-            LEFT JOIN role r ON ur.role_id = r.id
-            WHERE u.id = ?
-            `,
-            [id]
-        );
-        const user = userRows[0];
-        if (!user) return res.status(404).json({message: "Utilisateur introuvable"});
-
-        await db.query('UPDATE users SET status = ? WHERE id = ?', [status,id]);
-        
-        res.status(200).json({message: `Utilisateur ${status}`});
-    }catch(error){
-        console.error("Une erreur est survenu", error);
-        res.status(500).json({message: error.message});
-    }
-};
-
-export const deleteUser = async (req, res) => {
+export const validateUser = async (req, res) => {
   try {
     const { id } = req.params;
+    const { status } = req.body;
 
-    // Vérifier que l'utilisateur existe
+    if (!["approved", "rejected"].includes(status)) {
+      return res.status(400).json({ message: "Requête invalide" });
+    }
+
     const [userRows] = await db.query(
-      `SELECT u.id, u.first_name, u.email, 
-              COALESCE(GROUP_CONCAT(DISTINCT r.name SEPARATOR ', '), '') AS role_name
+      `SELECT u.first_name, u.email, r.name as role
        FROM users u
        LEFT JOIN user_role ur ON ur.user_id = u.id
        LEFT JOIN role r ON ur.role_id = r.id
@@ -81,22 +54,45 @@ export const deleteUser = async (req, res) => {
 
     const user = userRows[0];
     if (!user) {
-      return res.status(404).json({ message: "Utilisateur introuvable" });
+      return res.status(404).json({ message: "Aucun résultat" });
     }
 
-    // // Interdire la suppression des super_admin ou coordinateur
-    // const roles = user.role_name.split(",").map(r => r.trim());
-    // if (roles.includes("super_admin") || roles.includes("coordinateur")) {
-    //   return res.status(403).json({ message: "Impossible de supprimer cet utilisateur" });
-    // }
+    await db.query(`UPDATE users SET status = ? WHERE id = ?`, [status, id]);
 
-    // Suppression de l'utilisateur
+    res.status(200).json({ message: "Mise à jour effectuée" });
+  } catch (error) {
+    res.status(500).json({ message: "Erreur interne" });
+  }
+};
+
+
+
+export const deleteUser = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const [userRows] = await db.query(
+      `SELECT 
+          u.id, 
+          u.first_name, 
+          u.email, 
+          COALESCE(GROUP_CONCAT(DISTINCT r.name SEPARATOR ', '), '') AS role_name
+       FROM users u
+       LEFT JOIN user_role ur ON ur.user_id = u.id
+       LEFT JOIN role r ON ur.role_id = r.id
+       WHERE u.id = ?`,
+      [id]
+    );
+
+    const user = userRows[0];
+    if (!user) {
+      return res.status(404).json({ message: "Aucun résultat" });
+    }
+
     await db.query(`DELETE FROM users WHERE id = ?`, [id]);
 
-    res.status(200).json({ message: "Utilisateur supprimé avec succès" });
-
+    res.status(200).json({ message: "Suppression effectuée" });
   } catch (err) {
-    console.error("Erreur suppression utilisateur :", err);
-    res.status(500).json({ message: "Erreur serveur", error: err.message });
+    res.status(500).json({ message: "Erreur interne" });
   }
 };

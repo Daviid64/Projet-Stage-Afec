@@ -5,28 +5,22 @@ import bcrypt from 'bcrypt';
 
 const UserService = {
 
-  // Création du compte 
   createUser: async (userData) => {
-    const {  first_name, last_name, email, password,confirmPassword, agency_id, role } = userData;
+    const { first_name, last_name, email, password, confirmPassword, agency_id, role } = userData;
 
     const existingUser = await userModel.findByEmail(email, pool);
     if (existingUser) {
-      throw new Error("Email déjà utilisé");
+      throw new Error("Impossible de créer l'utilisateur");
     }
 
-    if (password !== confirmPassword) throw new Error("Les mots de passe ne correspondent pas !");
+    if (password !== confirmPassword) {
+      throw new Error("Impossible de créer l'utilisateur");
+    }
 
-    // Hash du mot de passe
     const hashedPassword = await bcrypt.hash(password, 10);
-      
-    // Token de vérification
     const verificationToken = crypto.randomBytes(32).toString('hex');
-
-    // Résolution du role_id depuis le rôle fourni
     const role_id = await UserService.resolveRoleId(role);
-    console.log("role_id avant création :", role_id); // <--- debug
 
-    // Création utilisateur avec agency_id
     const { userId } = await userModel.create({
       first_name,
       last_name,
@@ -40,7 +34,8 @@ const UserService = {
     return { userId, verificationToken };
   },
 
-  // Chercher un utilisateur par email
+
+
   findUserByEmail: async (email, includePassword = false) => {
     const user = await userModel.findByEmail(email, pool);
 
@@ -49,10 +44,10 @@ const UserService = {
     if (!includePassword) delete user.password;
 
     return user;
-},
+  },
 
 
-  // Vérification par token
+
   verifyUserByToken: async (token) => {
     const query = 'SELECT * FROM users WHERE verificationToken = ?';
     const [rows] = await pool.query(query, [token]);
@@ -68,33 +63,38 @@ const UserService = {
     return true;
   },
 
+
+
   resolveRoleId: async (roleName) => {
     const [rows] = await pool.query("SELECT id FROM role WHERE name = ?", [roleName]);
     return rows.length ? rows[0].id : null;
   },
 
-  getAllUsers: async () => {
-  const [users] = await pool.query(`
-    SELECT u.*, 
-           (SELECT GROUP_CONCAT(r.name) 
-            FROM user_role ur 
-            JOIN role r ON ur.role_id = r.id 
-            WHERE ur.user_id = u.id) AS roles,
-          a.name AS agency_name,
-          a.region AS agency_region
-    FROM users u
-    LEFT JOIN agencies a ON u.agency_id = a.id
-    WHERE u.id NOT IN (
-        SELECT ur.user_id 
-        FROM user_role ur 
-        JOIN role r ON ur.role_id = r.id 
-        WHERE r.name = 'super_admin'
-    )
-  `);
 
-  users.forEach(u => delete u.password);
-  return users;
-},
+
+  getAllUsers: async () => {
+    const [users] = await pool.query(`
+      SELECT u.*, 
+             (SELECT GROUP_CONCAT(r.name) 
+              FROM user_role ur 
+              JOIN role r ON ur.role_id = r.id 
+              WHERE ur.user_id = u.id) AS roles,
+            a.name AS agency_name,
+            a.region AS agency_region
+      FROM users u
+      LEFT JOIN agencies a ON u.agency_id = a.id
+      WHERE u.id NOT IN (
+          SELECT ur.user_id 
+          FROM user_role ur 
+          JOIN role r ON ur.role_id = r.id 
+          WHERE r.name = 'super_admin'
+      )
+    `);
+    users.forEach(u => delete u.password);
+    return users;
+  },
+
+
 
   getUserById: async (id) => {
     const user = await userModel.getById(id, pool);
@@ -102,23 +102,30 @@ const UserService = {
     return user;
   },
 
+
+
   updateUserById: async (userData, id) => {
     return await userModel.updateById(userData, id, pool);
   },
 
-  updateUserPassword: async (id,hashedPassword) => {
+
+
+  updateUserPassword: async (id, hashedPassword) => {
     const query = "UPDATE users SET password = ? WHERE id = ?";
-    return await pool.query(query, [hashedPassword,id])
+    return await pool.query(query, [hashedPassword, id]);
   },
+
+
 
   deleteUserById: async (id) => {
     return await userModel.deleteById(id, pool);
   },
 
+
+
   deleteAllUsers: async () => {
     return await userModel.deleteAll(pool);
   }
-
-}
+};
 
 export default UserService;

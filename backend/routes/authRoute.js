@@ -1,32 +1,41 @@
 import express from 'express';
+import { globalLimiter, authLimiter } from "../middleware/rateLimiters.js";
 import UserService from '../services/UserService.js';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import nodemailer from 'nodemailer';
 import pool from '../config/db.js';
+import { verifyToken } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
 
-// -------------------- LOGIN --------------------
-router.post('/login', async (req, res) => {
+router.post('/login', globalLimiter, async (req, res) => {
   try {
     const { email, password } = req.body;
-    console.log("Tentative de connexion pour :", email);
 
     const user = await UserService.findUserByEmail(email, true);
-    if (!user) return res.status(401).json({ success: false, message: "Email ou mot de passe invalide" });
 
-    const isPasswordValid = await bcrypt.compare(password, user.password);
-    if (!isPasswordValid) return res.status(401).json({ success: false, message: "Email ou mot de passe invalide" });
-
-    if (!['approved', 'active'].includes(user.status)) {
-      return res.status(403).json({ success: false, message: "Compte non activé" });
+    if (!user) {
+      console.warn(`Tentative de login avec email inconnu : ${email}`);
+      return res.status(401).json({ success: false, message: "Identifiants invalides" });
     }
 
-    // Mettre à jour last_login
-    await pool.query('UPDATE users SET last_login = NOW() WHERE id = ?', [user.id]);
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    if (!isPasswordValid) {
+      console.warn(`Mot de passe incorrect pour : ${email}`);
+      return res.status(401).json({ success: false, message: "Identifiants invalides" });
+    }
 
-    // Récupérer l'utilisateur avec les rôles à jour
+    if (!['approved', 'active'].includes(user.status)) {
+      console.warn(`Compte inactif ou non approuvé : ${email}`);
+      return res.status(401).json({ success: false, message: "Identifiants invalides" });
+    }
+
+    await pool.query(
+      "UPDATE users SET last_login = NOW(), last_login_tracking = NOW() WHERE id = ?",
+      [user.id]
+    );
+
     const [rows] = await pool.query(
       `SELECT u.*, 
               (SELECT GROUP_CONCAT(r.name) 
@@ -38,13 +47,8 @@ router.post('/login', async (req, res) => {
       [user.id]
     );
 
-    if (!rows || rows.length === 0) {
-      return res.status(500).json({ success: false, message: "Utilisateur introuvable après update" });
-    }
-
     const updatedUser = rows[0];
 
-    // Générer le token JWT
     const token = jwt.sign(
       { id: updatedUser.id, roles: updatedUser.roles ? updatedUser.roles.split(',') : [] },
       process.env.JWT_SECRET,
@@ -64,16 +68,25 @@ router.post('/login', async (req, res) => {
 
   } catch (error) {
     console.error("Login Error =>", error);
-    return res.status(500).json({ success: false, message: "Erreur serveur" });
+    return res.status(500).json({ success: false, message: "Une erreur est survenue" });
   }
 });
 
-// -------------------- MOT DE PASSE OUBLIÉ --------------------
-router.post("/forgotPassword", async (req, res) => {
+
+
+router.post("/forgotPassword", globalLimiter, async (req, res) => {
   try {
     const { email } = req.body;
+
     const user = await UserService.findUserByEmail(email);
-    if (!user) return res.status(404).json({ success: false, message: "Utilisateur introuvable" });
+
+    if (!user) {
+      console.warn(`Tentative de reset password avec email inconnu : ${email}`);
+      return res.status(200).json({
+        success: true,
+        message: "Si un compte existe pour cet email, un message a été envoyé."
+      });
+    }
 
     const resetToken = jwt.sign({ id: user.id }, process.env.JWT_SECRET, { expiresIn: "15m" });
     const resetLink = `http://localhost:5173/reset-password?token=${resetToken}`;
@@ -93,41 +106,47 @@ router.post("/forgotPassword", async (req, res) => {
              <p>Si vous n'avez pas fait cette demande, ignorez ce message.</p>`
     });
 
-    console.log("Lien de réinitialisation :", resetLink);
-    return res.status(200).json({ success: true, message: "Lien de réinitialisation envoyé" });
+    console.log("Lien de réinitialisation envoyé :", resetLink);
+
+    return res.status(200).json({
+      success: true,
+      message: "Si un compte existe pour cet email, un message a été envoyé."
+    });
 
   } catch (error) {
-    console.error("Erreur password", error);
-    return res.status(500).json({ success: false, message: "Erreur serveur" });
+    console.error("Erreur forgotPassword", error);
+    return res.status(500).json({ success: false, message: "Une erreur est survenue" });
   }
 });
 
-// -------------------- RESET PASSWORD --------------------
+
+
 router.post("/reset-password", async (req, res) => {
   try {
     const { token, password } = req.body;
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
     const user = await UserService.getUserById(decoded.id);
-    if (!user) return res.status(404).json({ success: false, message: "Utilisateur introuvable" });
+    if (!user) {
+      console.warn("Token reset associé à un utilisateur inexistant");
+      return res.status(400).json({ success: false, message: "Lien invalide" });
+    }
 
     const hashedPassword = await bcrypt.hash(password, 10);
     await UserService.updateUserPassword(user.id, hashedPassword);
 
-    return res.status(200).json({ success: true, message: "Mot de passe réinitialisé avec succès" });
+    return res.status(200).json({ success: true, message: "Mot de passe réinitialisé" });
+
   } catch (error) {
     console.error("Erreur reset-password:", error);
 
-    if (error.name === "TokenExpiredError") {
-      return res.status(400).json({ success: false, message: "Lien expiré, veuillez réitérer votre demande" });
-    }
-
-    return res.status(500).json({ success: false, message: "Erreur serveur" });
+    return res.status(400).json({ success: false, message: "Lien invalide" });
   }
 });
 
-// -------------------- INSCRIPTION --------------------
-router.post("/register", async (req, res) => {
+
+
+router.post("/register", globalLimiter, async (req, res) => {
   try {
     const { first_name, last_name, email, password, confirmPassword, agency_id, role } = req.body;
 
@@ -136,20 +155,67 @@ router.post("/register", async (req, res) => {
     if (!role) return res.status(400).json({ success: false, message: "Le rôle est obligatoire" });
 
     const existingUser = await UserService.findUserByEmail(email);
-    if (existingUser) return res.status(400).json({ success: false, message: "Email déjà utilisé" });
+    if (existingUser) {
+      return res.status(400).json({ success: false, message: "Impossible de créer ce compte" });
+    }
 
-    const { userId } = await UserService.createUser({ first_name, last_name, email, password, confirmPassword, agency_id, role });
+    const { userId } = await UserService.createUser({
+      first_name,
+      last_name,
+      email,
+      password,
+      confirmPassword,
+      agency_id,
+      role
+    });
 
     return res.status(201).json({
       success: true,
-      message: role === "coordinateur"
-        ? "Compte coordinateur créé. En attente de validation par l'admin principal"
-        : "Compte stagiaire créé avec succès !",
+      message: "Votre compte a été créé avec succès",
       userId
     });
+
   } catch (error) {
     console.error("Erreur register", error);
-    return res.status(500).json({ success: false, message: "Erreur serveur" });
+    return res.status(500).json({ success: false, message: "Une erreur est survenue" });
+  }
+});
+
+
+
+router.post('/logout', verifyToken, authLimiter, async (req, res) => {
+  try {
+    const userId = req.user?.id;
+    if (!userId) return res.status(401).json({ success: false, message: "Action non autorisée" });
+
+    const [rows] = await pool.query(
+      "SELECT last_login_tracking FROM users WHERE id = ?",
+      [userId]
+    );
+
+    if (!rows || !rows[0].last_login_tracking) {
+      console.warn(`Tentative de logout sans session active (userId=${userId})`);
+      return res.status(400).json({ success: false, message: "Erreur lors de la déconnexion" });
+    }
+
+    const loginTime = new Date(rows[0].last_login_tracking);
+    const logoutTime = new Date();
+    const durationSeconds = Math.floor((logoutTime - loginTime) / 1000);
+
+    await pool.query(
+      "UPDATE users SET total_connection_time = total_connection_time + ?, last_login_tracking = NULL WHERE id = ?",
+      [durationSeconds, userId]
+    );
+
+    return res.status(200).json({
+      success: true,
+      message: "Déconnexion réussie",
+      duration: durationSeconds
+    });
+
+  } catch (error) {
+    console.error("Erreur logout:", error);
+    return res.status(500).json({ success: false, message: "Une erreur est survenue" });
   }
 });
 
