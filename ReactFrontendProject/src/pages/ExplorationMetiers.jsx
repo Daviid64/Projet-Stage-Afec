@@ -20,8 +20,7 @@ function ExplorationMetier() {
     { name: "Administrateur Réseau", link: "/Administrateur-Réseau" },
     { name: "Développeur IA", link: "/Développeur-IA" },
   ];
-
- const navigate = useNavigate();
+  
    const [user, setUser] = useState(null);
  
    // Charger l'utilisateur depuis le localStorage
@@ -37,13 +36,6 @@ function ExplorationMetier() {
        }
      }
    }, []);
- 
-   const handleLogout = () => {
-     localStorage.removeItem("token");
-     localStorage.removeItem("user");
-     setUser(null);
-     navigate("/login");
-   };
 
   return (
     <div className="exploration-container">
