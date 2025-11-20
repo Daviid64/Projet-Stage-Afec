@@ -10,7 +10,7 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 app.use(cors({
-  origin: "https://projet-stage-afec.onrender.com",
+  origin: "https://projet-stage-afec-4.onrender.com",
   credentials: true
 }));
 
