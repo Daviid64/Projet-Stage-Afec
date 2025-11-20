@@ -9,15 +9,6 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
 
-  // On vérifie si l'utilisateur à un role
-  const hasRole = (roles, allowedRoles) => {
-    if (!roles) return false;
-    const roleArray = Array.isArray(roles)
-    ? roles
-    : roles.split(",").map((r) => r.trim()); //pour supprimer les espaces 
-    return roleArray.some((role) => allowedRoles.includes(role));
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -33,9 +24,6 @@ export default function LoginPage() {
 
       localStorage.setItem("token", token);
       localStorage.setItem("user", JSON.stringify(user));
-
-      // console.log("Utilisateur connecté:", user);
-      // console.log("Rôles de l'utilisateur :", user.roles);
 
       navigate("/", {replace: true});
       

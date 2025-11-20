@@ -36,7 +36,7 @@ function ProtectedRoute({ children }) {
   return children;
 }
 
-// Protège uniquement les pages admin
+// Protège les pages admin
 function AdminRoute({ children }) {
   const token = localStorage.getItem("token");
   const user = JSON.parse(localStorage.getItem("user") || "{}");
