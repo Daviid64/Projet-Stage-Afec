@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import axios from "axios"; 
 import "./Login.css";
+import API from "../api.js";
 
 export default function Register() {
   const [formData, setFormData] = useState({
@@ -35,15 +35,15 @@ export default function Register() {
     e.preventDefault();
 
     try {
-      const response = await axios.post("http://localhost:5000/auth/register", {
-        first_name: formData.firstName,
-        last_name: formData.lastName,
-        agency_id: formData.agency, 
-        email: formData.email,
-        password: formData.password,
-        confirmPassword: formData.confirmPassword,
-        role: formData.role,
-      });
+      const response = await API.post("/auth/register", {
+      first_name: formData.firstName,
+      last_name: formData.lastName,
+      agency_id: formData.agency, 
+      email: formData.email,
+      password: formData.password,
+      confirmPassword: formData.confirmPassword,
+      role: formData.role,
+    });
 
       if (response.data.success) {
         setMessage("Inscription réussie !");
