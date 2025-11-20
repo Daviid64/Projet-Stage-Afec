@@ -12,7 +12,7 @@ export default function ForgotPasswordPage() {
     
 
     try {
-        const response = await API.post('https://projet-stage-afec-2.onrender.com/forgotPassword', {
+        const response = await API.post('/auth/forgotPassword', {
         email,    
         });
 

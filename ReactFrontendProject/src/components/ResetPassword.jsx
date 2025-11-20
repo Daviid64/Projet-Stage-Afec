@@ -13,7 +13,7 @@ export default function ResetPasswordPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post("https://projet-stage-afec-2.onrender.com/reset-password", {
+      const res = await axios.post("/auth/reset-password", {
         token,
        password: newPassword,
       });

@@ -35,7 +35,7 @@ export default function Register() {
     e.preventDefault();
 
     try {
-      const response = await API.post("https://projet-stage-afec-2.onrender.com/", {
+      const response = await API.post("/auth/register", {
       first_name: formData.firstName,
       last_name: formData.lastName,
       agency_id: formData.agency, 
