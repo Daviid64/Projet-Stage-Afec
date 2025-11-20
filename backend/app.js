@@ -28,5 +28,5 @@ app.get('/verify/:token', (req, res) => {
 });
 
 app.listen (PORT, () =>{
-    console.log(`Le serveur tourne sur http://localhost:${PORT}`);
+  console.log(`Le serveur tourne sur le port ${PORT}`);
 })
