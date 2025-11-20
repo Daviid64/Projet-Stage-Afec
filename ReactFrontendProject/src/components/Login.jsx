@@ -11,12 +11,14 @@ export default function LoginPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+    
     try {
       const response = await API.post("/auth/login", {
         email,
         password,
-    });
+      });
+      console.log("Response login:", response.data);
+
 
     if (response.data.success) {
       const user = response.data.user;
