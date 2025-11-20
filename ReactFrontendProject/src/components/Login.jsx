@@ -13,7 +13,7 @@ export default function LoginPage() {
     e.preventDefault();
     
     try {
-      const response = await API.post("/auth/login", {
+      const response = await API.post("https://projet-stage-afec-2.onrender.com/login", {
         email,
         password,
       });
