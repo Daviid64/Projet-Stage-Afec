@@ -9,10 +9,14 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-app.use(cors({
-  origin: "https://projet-stage-afec-4.onrender.com",
-  credentials: true
-}));
+app.use(
+  cors({
+    origin: process.env.FRONTEND_URL,
+    credentials: true,
+    methods: ["GET", "POST", "PUT","PATCH", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  })
+);
 
 
 app.use(express.json());
@@ -28,5 +32,5 @@ app.get('/verify/:token', (req, res) => {
 });
 
 app.listen (PORT, () =>{
-  console.log(`Le serveur tourne sur le port ${PORT}`);
+    console.log(`Le serveur tourne sur http://localhost:${PORT}`);
 })
