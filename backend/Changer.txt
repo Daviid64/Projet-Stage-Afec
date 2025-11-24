@@ -1,2 +1,0 @@
-Remplacer le role de coordinateur par formateur et rajouter la durée de connexion de toutes les pages 
-Rajouter un filtre par agence 
