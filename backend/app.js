@@ -43,11 +43,10 @@ app.get('/verify/:token', (req, res) => {
 });
 
 // Servir les fichiers statiques du frontend
-app.use(express.static(path.join(__dirname, 'frontend/dist')));
+app.use(express.static(path.join(__dirname, 'ReactFrontendProject/dist')));
 
-// SPA fallback : toutes les autres routes non-API renvoient index.html
 app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'frontend/dist/index.html'));
+  res.sendFile(path.join(__dirname, 'ReactFrontendProject/dist/index.html'));
 });
 
 // Lancer le serveur
