@@ -17,31 +17,32 @@ body, html {
   min-height: 100vh;
 }
 
-
-.header {
+/* --- HEADER --- */
+.header, .header-blue {
   position: relative;
   width: 100%;
-  height: 250px;
-  overflow: hidden;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
+  overflow: hidden;
 }
 
 .header-blue {
-  position: relative;
-  width: 100%;
-  height: 250px;
   background-color: #355DA5;
-  display: flex;
-  flex-direction: column; 
-  align-items: center;
-  justify-content: center; 
+  height: 250px;
+  padding: 10px 20px;
 }
 
 .header-logo {
-  height: 85%; 
-  margin-bottom: 5px; 
+  height: 85%;
+  margin-bottom: 5px;
+}
+
+.header-nav {
+  display: flex;
+  gap: 20px;
+  margin-top: 10px;
 }
 
 .nav-link {
@@ -59,42 +60,21 @@ body, html {
   display: flex;
   align-items: center;
   gap: 20px;
-  position: absolute;
-  top: 15px;
-  right: 30px;
 }
 
 .btn-logout {
   background-color: #e63946;
   color: white;
   border: none;
-  padding:8px 16px;
+  padding: 8px 16px;
   border-radius: 8px;
-  cursor:pointer;
-  transition: background-color 0.2;
+  cursor: pointer;
+  transition: background-color 0.2s;
 }
 
-
-.header-content {
-  position: relative;
-  z-index: 2;
-  text-align: center;
-}
-
-.header-content nav a {
-  color: white;
-  font-weight: bold;
-  text-decoration: none;
-  margin: 0 20px;
-  transition: color 0.3s;
-}
-
-.header-content nav a:hover {
-  color: #000033;
-}
-
+/* --- MAIN CONTENT --- */
 .main-content {
-  flex: 1; 
+  flex: 1;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -102,8 +82,8 @@ body, html {
   padding: 2rem;
   text-align: center;
   background: linear-gradient(180deg, #f8faff 0%, #eef2f7 100%);
+  min-height: 80vh;
 }
-
 
 .main-content h2 {
   font-size: 2rem;
@@ -113,7 +93,7 @@ body, html {
 
 .main-content p {
   font-size: 1.4rem;
-  max-width: 700px; 
+  max-width: 700px;
   margin-bottom: 2rem;
   line-height: 1.6;
   color: #333;
@@ -123,9 +103,10 @@ body, html {
 .button-container {
   display: flex;
   justify-content: center;
+  gap: 10px;
 }
 
-
+/* --- BUTTONS --- */
 .btn {
   padding: 15px 35px;
   font-size: 18px;
@@ -155,23 +136,13 @@ body, html {
   transform: translateY(-3px);
 }
 
+/* --- EXPLORATION GRID --- */
 .exploration-container {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
 }
 
-      /* ---- PAGE CATEGORIE METIERS DU NUMERIQUE ---- */
-
-/* --- Section principale --- */
-.main-content {
-  text-align: center;
-  padding: 80px 20px;
-  background: linear-gradient(180deg, #f8faff 0%, #eef2f7 100%);
-  min-height: 80vh;
-}
-
-/* Titre et sous-titre */
 .main-title {
   font-size: 2.2rem;
   color: #1e2a44;
@@ -192,6 +163,7 @@ body, html {
   grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
   gap: 25px;
   max-width: 1000px;
+  width: 100%;
   margin: 0 auto;
 }
 
@@ -210,9 +182,9 @@ body, html {
   transition: all 0.25s ease;
   position: relative;
   overflow: hidden;
+  text-align: center;
 }
 
-/* Animation légère au survol */
 .metier-card::before {
   content: "";
   position: absolute;
@@ -238,36 +210,48 @@ body, html {
   font-size: 1.1rem;
 }
 
+/* --- FOOTER --- */
 .footer {
-  margin-top: auto; 
+  margin-top: auto;
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   background-color: #f5f5f5;
-  height: 100px;
   width: 100%;
-}
-
-.footer-image {
-  width: 100%;
-  height: 250px;
-  object-fit: cover;
-  position: absolute;
-  top: 0;
-  left: 0;
+  padding: 15px 0;
 }
 
 .footer p {
-  position: relative;
-  z-index: 2;
   font-size: 1rem;
   color: #345da4;
+  text-align: center;
+  margin: 5px 0;
 }
 
+/* --- RESPONSIVE --- */
+@media (max-width: 1024px) {
+  .metiers-grid {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    padding: 0 15px;
+  }
+
+  .metier-card {
+    padding: 20px 10px;
+    font-size: 0.95rem;
+  }
+
+  .main-title {
+    font-size: 1.8rem;
+  }
+
+  .subtitle {
+    font-size: 1rem;
+  }
+}
 
 @media (max-width: 768px) {
-
-  /* Header */
   .header-blue {
     height: auto;
     padding: 20px 10px;
@@ -290,10 +274,8 @@ body, html {
     margin-top: 10px;
   }
 
-  /* Main Text */
   .main-content {
     padding: 1rem;
-    text-align: center;
   }
 
   .main-content h2 {
@@ -305,30 +287,18 @@ body, html {
     text-align: left;
   }
 
-  /* Buttons */
   .btn {
     padding: 12px 20px;
     font-size: 16px;
   }
 
-  /* Grille métiers */
   .metiers-grid {
     grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
     gap: 15px;
   }
-
-  /* Footer */
-  .footer {
-    flex-direction: column;
-    text-align: center;
-    height: auto;
-    padding: 20px 0;
-  }
 }
 
-
 @media (max-width: 480px) {
-
   .main-content h2 {
     font-size: 1.3rem;
   }
@@ -346,5 +316,3 @@ body, html {
     font-size: 1rem;
   }
 }
-
-
