@@ -106,7 +106,7 @@ function App() {
           }
         />
 
-        <Route path="/forgotPassword" element={<ForgotPasswordPage />} />
+        <Route path="/forgot-Password" element={<ForgotPasswordPage />} />
         <Route path="/reset-password" element={<ResetPasswordPage />} />
 
         {/* Route protégée admin */}
