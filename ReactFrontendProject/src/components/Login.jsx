@@ -18,8 +18,6 @@ export default function LoginPage() {
         email,
         password,
       });
-      console.log("Response login:", response.data);
-
 
     if (response.data.success) {
       const user = response.data.user;
