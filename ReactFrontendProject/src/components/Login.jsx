@@ -68,7 +68,7 @@ return (
     {message && <p className="login-message">{message}</p>}
 
     <p className="forgotPassword">
-      <a href="/forgotPassword">Mot de passe oublié ?</a>
+      <Link to="/forgotPassword">Mot de passe oublié ?</Link>
     </p>
 
     </form>
