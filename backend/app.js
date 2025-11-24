@@ -1,9 +1,12 @@
 import express from 'express';
 import dotenv from 'dotenv';
+import helmet from 'helmet';
 import cors from "cors";
 import UserRoute from './routes/UserRoute.js';
 import adminRoutes from './routes/adminRoutes.js';
 import authRoutes from './routes/authRoute.js';
+
+app.use(helmet());
 
 dotenv.config();
 const app = express();
