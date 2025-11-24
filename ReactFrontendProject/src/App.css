@@ -265,24 +265,86 @@ body, html {
 }
 
 
-
-/* Responsive */
 @media (max-width: 768px) {
-  .po-main {
+
+  /* Header */
+  .header-blue {
+    height: auto;
+    padding: 20px 10px;
+  }
+
+  .header-logo {
+    height: 70px;
+    margin: 10px 0;
+  }
+
+  .header-nav {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .btn-logout {
+    position: relative;
+    top: 0;
+    right: 0;
+    margin-top: 10px;
+  }
+
+  /* Main Text */
+  .main-content {
     padding: 1rem;
-    margin: 1rem;
+    text-align: center;
   }
 
-  .po-main h1 {
-    font-size: 1.75rem;
+  .main-content h2 {
+    font-size: 1.6rem;
   }
 
-  .po-main h2 {
-    font-size: 1.25rem;
-  }
-
-  .po-main h3 {
+  .main-content p {
     font-size: 1.1rem;
+    text-align: left;
+  }
+
+  /* Buttons */
+  .btn {
+    padding: 12px 20px;
+    font-size: 16px;
+  }
+
+  /* Grille métiers */
+  .metiers-grid {
+    grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+    gap: 15px;
+  }
+
+  /* Footer */
+  .footer {
+    flex-direction: column;
+    text-align: center;
+    height: auto;
+    padding: 20px 0;
   }
 }
+
+
+@media (max-width: 480px) {
+
+  .main-content h2 {
+    font-size: 1.3rem;
+  }
+
+  .main-content p {
+    font-size: 1rem;
+  }
+
+  .metier-card {
+    padding: 15px 10px;
+    font-size: 0.9rem;
+  }
+
+  .metier-name {
+    font-size: 1rem;
+  }
+}
+
 
