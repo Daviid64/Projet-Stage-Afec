@@ -45,7 +45,7 @@ app.get('/verify/:token', (req, res) => {
 // Servir les fichiers statiques du frontend
 app.use(express.static(path.join(__dirname, '../ReactFrontendProject/dist')));
 
-app.get('/*', (req, res) => {
+app.all(/.*/, (req, res) => {
   res.sendFile(path.join(__dirname, '../ReactFrontendProject/dist/index.html'));
 });
 
