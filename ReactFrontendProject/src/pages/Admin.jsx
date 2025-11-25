@@ -26,7 +26,7 @@ function AdminPage() {
       headers: { Authorization: `Bearer ${token}` }
     });
 
-    const filtered = data.filter(u => !(u.roles?.split(",")?.includes("super_admin"||"coordinateur")));
+    const filtered = data.filter(u => !(u.roles?.split(",")?.includes("super_admin","coordinateur")));
     setUsers(filtered);
 
     } catch (err) {
