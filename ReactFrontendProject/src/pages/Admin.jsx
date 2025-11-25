@@ -20,19 +20,36 @@ function AdminPage() {
 
   // Récupérer les utilisateurs
   const fetchUsers = async () => {
-    try {
+  try {
     const token = localStorage.getItem("token"); // Récupère le token
+    const currentUser = JSON.parse(localStorage.getItem("user")); // Récupère l'utilisateur courant
     const { data } = await API.get("/users", {
       headers: { Authorization: `Bearer ${token}` }
     });
 
-    const filtered = data.filter(u => !(u.roles?.split(",")?.includes("super_admin")));
+    // Rôle courant
+    const roles = currentUser?.roles?.split(",") || [];
+
+    let filtered;
+
+    if (roles.includes("super_admin")) {
+      // Super admin voit tout sauf lui-même
+      filtered = data.filter(u => u.id !== currentUser.id);
+    } else if (roles.includes("coordinateur")) {
+      // Coordinateur voit uniquement les stagiaires
+      filtered = data.filter(u => u.roles?.split(",")?.includes("stagiaire"));
+    } else {
+      // Autres rôles : pas de visibilité
+      filtered = [];
+    }
+
     setUsers(filtered);
 
-    } catch (err) {
-      console.error("Erreur fetch users :", err);
-    }
-  };
+  } catch (err) {
+    console.error("Erreur fetch users :", err);
+  }
+};
+
 
   // Initial fetch + actualisation toutes les 5s
   useEffect(() => {
