@@ -23,11 +23,13 @@ POST /users/register
 
 ```json
 {
-  "first_name": "Emilie",
-  "last_name": "Dupont",
-  "email": "emilie@afec.fr",
-  "password": "motdepasse123",
-  "confirmPassword": "motdepasse123"
+  "first_name": "Kizaru",
+  "last_name": "Borsalino",
+  "email": "kizaru@test.com",
+  "password": "12345678",
+  "confirmPassword": "12345678",
+  "agency_id": 1,
+  "role": "coordinateur"
 }
 
 Réponse :
