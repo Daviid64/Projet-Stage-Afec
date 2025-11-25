@@ -21,9 +21,14 @@ function AdminPage() {
   // Récupérer les utilisateurs
   const fetchUsers = async () => {
     try {
-      const { data } = await API.get("/users");
-      const filtered = data.filter(u => !(u.roles?.split(",")?.includes("super_admin")));
-      setUsers(filtered);
+    const token = localStorage.getItem("token"); // Récupère le token
+    const { data } = await API.get("/users", {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+
+    const filtered = data.filter(u => !(u.roles?.split(",")?.includes("super_admin")));
+    setUsers(filtered);
+
     } catch (err) {
       console.error("Erreur fetch users :", err);
     }
