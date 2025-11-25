@@ -25,28 +25,22 @@ function Acceuil() {
 
   // Déconnexion
   const handleLogout = async () => {
-    try {
-      const token = localStorage.getItem("token");
-      if (token) {
-        await API.post("/auth/logout", {}, { headers: { Authorization: `Bearer ${token}` } });
-      }
-
-      // Supprimer token et user localement
-      localStorage.removeItem("token");
-      localStorage.removeItem("user");
-      setUser(null);
-
-      navigate("/login");
-    } catch (err) {
-      console.error("Erreur lors de la déconnexion :", err);
-      alert("Impossible de se déconnecter correctement.");
-
-      localStorage.removeItem("token");
-      localStorage.removeItem("user");
-      setUser(null);
-      navigate("/login");
+  try {
+    const token = localStorage.getItem("token");
+    if (token) {
+      await API.post("/auth/logout", {}, { headers: { Authorization: `Bearer ${token}` } });
     }
-  };
+  } catch (err) {
+    console.error("Erreur lors de la déconnexion :", err);
+    alert("Impossible de se déconnecter correctement.");
+  } finally {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    setUser(null);
+    navigate("/login");
+  }
+};
+
 
   return (
     <div className="page-container">
