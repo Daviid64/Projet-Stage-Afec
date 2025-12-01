@@ -1,5 +1,5 @@
 import express from 'express';
-import { globalLimiter, authLimiter } from "../middleware/rateLimiters.js";
+
 import UserService from '../services/UserService.js';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
@@ -9,7 +9,7 @@ import { verifyToken } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
 
-router.post('/login', globalLimiter, async (req, res) => {
+router.post('/login', async (req, res) => {
   try {
     const { email, password } = req.body;
 
@@ -74,7 +74,7 @@ router.post('/login', globalLimiter, async (req, res) => {
 
 
 
-router.post("/forgotPassword", globalLimiter, async (req, res) => {
+router.post("/forgotPassword", async (req, res) => {
   try {
     const { email } = req.body;
 
@@ -146,7 +146,7 @@ router.post("/reset-password", async (req, res) => {
 
 
 
-router.post("/register", globalLimiter, async (req, res) => {
+router.post("/register", async (req, res) => {
   try {
     const { first_name, last_name, email, password, confirmPassword, agency_id, role } = req.body;
 
@@ -183,7 +183,7 @@ router.post("/register", globalLimiter, async (req, res) => {
 
 
 
-router.post('/logout', verifyToken, authLimiter, async (req, res) => {
+router.post('/logout', verifyToken, async (req, res) => {
   try {
     const userId = req.user?.id;
     if (!userId) return res.status(401).json({ success: false, message: "Action non autorisée" });
