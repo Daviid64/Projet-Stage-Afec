@@ -5,11 +5,13 @@ import cors from "cors";
 import UserRoute from './routes/UserRoute.js';
 import adminRoutes from './routes/adminRoutes.js';
 import authRoutes from './routes/authRoute.js';
-import limiteur, { limiter } from './middleware/rateLimiters.js'
+import { limiter } from './middleware/rateLimiters.js'
 
 dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 3000;
+
+app.set('trust proxy', 1);
 
 app.use(helmet());
 app.use(limiter);

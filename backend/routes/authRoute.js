@@ -1,5 +1,4 @@
 import express from 'express';
-
 import UserService from '../services/UserService.js';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
