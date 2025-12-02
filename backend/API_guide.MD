@@ -16,7 +16,7 @@ http://localhost:5000
 
 **Endpoint :**
 
-POST /users/register
+POST /auth/register
 
 
 **Body :**
@@ -42,28 +42,11 @@ Réponse :
 
     Remarque : l'utilisateur ou coordinateur sera en statut "pending" jusqu'à validation par un admin.
 
-1.2. Vérification du compte
+1.2 Connexion
 
 Endpoint :
 
-GET /users/verify/:token
-
-Paramètre :
-
-    :token → le token envoyé par email lors de l'inscription.
-
-Réponse :
-
-{
-  "success": true,
-  "message": "Compte vérifié ✅"
-}
-
-1.3. Connexion
-
-Endpoint :
-
-POST /users/login
+POST /auth/login
 
 Body :
 
@@ -82,31 +65,11 @@ Réponse :
 
     Remarque : l'utilisateur doit être "approved" pour se connecter.
 
-1.4. Rechercher un utilisateur par email
+1.3 Récupérer tous les utilisateurs
 
 Endpoint :
 
-GET /users/email?email=exemple@domaine.com
-
-Réponse :
-
-{
-  "success": true,
-  "user": {
-    "id": 2,
-    "first_name": "Emilie",
-    "last_name": "Dupont",
-    "email": "emilie@afec.fr",
-    "status": "approved",
-    "roles": null
-  }
-}
-
-1.5. Récupérer tous les utilisateurs
-
-Endpoint :
-
-GET /users
+GET /admin/users
 
 Réponse :
 
@@ -127,7 +90,7 @@ Réponse :
 
 NB : Cette route à été sécurisé de manière que seul le super_admin et le coordinateur puisse voir les utilisateurs inscrit
 
-1.6. Récupérer tous les utilisateurs (admin)
+1.4. Récupérer tous les utilisateurs (admin)
 
 Endpoint :
 
@@ -218,7 +181,7 @@ Réponse :
   }
 ]
 
-1.7. Supprimer un utilisateur
+1.5. Supprimer un utilisateur
 
 Endpoint :
 
@@ -233,27 +196,6 @@ Réponse :
 
 NB: Seulement possible depuis la page admin par les coordinateurs et le super_admin
 
-1.8. Mettre à jour un utilisateur
-
-Endpoint :
-
-PUT /users/:id
-
-Body :
-
-{
-  "first_name": "Emilie",
-  "last_name": "Dupont",
-  "email": "emilie@afec.fr",
-  "status": "approved"
-}
-
-Réponse :
-
-{
-  "success": true,
-  "message": "Utilisateur modifié avec succès"
-}
 
 2. Administrateurs
 
