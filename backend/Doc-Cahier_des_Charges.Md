@@ -76,6 +76,7 @@ Le site web AFEC a pour objectif de :
 - JSON Web Token (JWT)
 - Bcrypt (hachage des mots de passe)
 - Helmet (sécurité des en-têtes HTTP)
+- express-rate-limit
 - Crypto
 - Nodemailer
 - mysql2
@@ -91,8 +92,7 @@ Le site web AFEC a pour objectif de :
 
 ### Cloner le projet
 ```bash
-git clone https://github.com/Daviid64/ProjetElearning.git
-
+git clone https://github.com/Daviid64/Projet-Stage-Afec.git
 
 
 ProjetStage/
@@ -102,18 +102,24 @@ ProjetStage/
 │   ├── routes/
 │   ├── controller/
 │   ├── models/
-│   └── middleware/
+│   ├── middleware/
+│   ├── script/
+│   ├── services/
+│   └── Limiter_Security/
 │
-├── frontend/
+├── ReactFrontendProject/
 │   ├── public/
 │   ├── src/
 │   │   ├── components/
 │   │   ├── pages/
 │   │   ├── services/
+│   │   ├── main.jsx
 │   │   └── App.jsx
 │
+├── index.html
 ├── .env
 ├── README.md
 └── package.json
+
 
 
