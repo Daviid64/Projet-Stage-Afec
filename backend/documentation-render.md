@@ -17,7 +17,6 @@ push sur la branche configurée.
 
 ### 🛠️ Commandes de build et de démarrage
 
-*(À compléter selon ton projet : Node, Python, etc.)*
 
 Exemple Node.js : - **Build Command** : `yarn install` - **Start
 Command** : `yarn start`

@@ -59,7 +59,7 @@ Le site web AFEC a pour objectif de :
 
 
 > Le backend expose des routes sécurisées consommées par le frontend via fetch/Axios.  
-> L'application est déployée sur [Render](https://render.com).
+> L'application est déployée sur [Render](Consulter la documentation Render pour + d'infos).
 
 ---
 
@@ -69,6 +69,7 @@ Le site web AFEC a pour objectif de :
 - React (JSX)
 - CSS3 / HTML5
 - React Router (navigation)
+- ViteJS
 
 ### **Backend**
 - Node.js
