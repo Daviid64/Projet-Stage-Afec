@@ -15,8 +15,10 @@ export const verifyToken = async (req, res, next) => {
         }
 
         const token = authHeader.split(" ")[1];
+        console.log("Token reçu :", token);
         const decoded = jwt.verify(token, JWT_SECRET);
-        
+        console.log("Token décodé :", decoded);
+
         const [rows] = await db.query(
       'SELECT id FROM users WHERE id = ? AND is_active = 1',
       [decoded.id]
