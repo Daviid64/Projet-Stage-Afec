@@ -3,7 +3,7 @@ import db from "../config/db.js";
 
 const JWT_SECRET = process.env.JWT_SECRET;
 
-export const verifyToken = (req, res, next) => {
+export const verifyToken = async (req, res, next) => {
     try {
         const authHeader = req.headers.authorization;
 
@@ -15,16 +15,28 @@ export const verifyToken = (req, res, next) => {
         }
 
         const token = authHeader.split(" ")[1];
-
         const decoded = jwt.verify(token, JWT_SECRET);
-        req.user = decoded;
+        
+        const [rows] = await db.query(
+      'SELECT id FROM users WHERE id = ? AND is_active = 1',
+      [decoded.id]
+    );
+
+    if (rows.length === 0) {
+      return res.status(401).json({
+        success: false,
+        message: "Compte désactivé ou introuvable"
+      });
+    }
+
+    req.user = decoded;
 
         next();
     } catch (err) {
         
         return res.status(401).json({
             success: false,
-            message: "Accès non autorisé"
+            message: "token invalide ou expiré"
         });
     }
 };

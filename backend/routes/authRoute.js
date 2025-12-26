@@ -8,6 +8,77 @@ import { verifyToken } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
 
+// Route pour récupérer les infos de l'utilisateur connecté (validation du token)
+router.get('/me', verifyToken, async (req, res) => {
+  try {
+    // Récupérer les infos utilisateur depuis la DB
+    const [userRows] = await pool.query(
+      `SELECT u.id, u.email, u.first_name, u.last_name, u.created_at, u.status
+       FROM users u
+       WHERE u.id = ?`,
+      [req.user.id]
+    );
+
+    if (userRows.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "Utilisateur introuvable"
+      });
+    }
+
+    // Vérifier que le compte est toujours actif
+    if (!['approved', 'active'].includes(userRows[0].status)) {
+      return res.status(403).json({
+        success: false,
+        message: "Compte inactif"
+      });
+    }
+
+    // Récupérer les rôles réels depuis la DB
+    const [roleRows] = await pool.query(
+      `SELECT r.name AS role_name
+       FROM user_role ur
+       JOIN role r ON ur.role_id = r.id
+       WHERE ur.user_id = ?`,
+      [req.user.id]
+    );
+
+    const roles = roleRows.map(r => r.role_name.toLowerCase().trim());
+
+    // Déterminer le rôle principal (pour compatibilité avec votre frontend)
+    let mainRole = 'stagiaire'; // Rôle par défaut
+    if (roles.includes('super_admin')) {
+      mainRole = 'super_admin';
+    } else if (roles.includes('coordinateur')) {
+      mainRole = 'coordinateur';
+    } else if (roles.includes('admin')) {
+      mainRole = 'admin';
+    }
+
+    const user = {
+      id: userRows[0].id,
+      email: userRows[0].email,
+      first_name: userRows[0].first_name,
+      last_name: userRows[0].last_name,
+      role: mainRole, // Rôle principal pour l'UI
+      roles: roles, // Tous les rôles
+      createdAt: userRows[0].created_at
+    };
+
+    res.json({
+      success: true,
+      user
+    });
+
+  } catch (error) {
+    console.error("Erreur /auth/me:", error);
+    res.status(500).json({
+      success: false,
+      message: "Erreur serveur"
+    });
+  }
+});
+
 router.post('/login', async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -71,8 +142,6 @@ router.post('/login', async (req, res) => {
   }
 });
 
-
-
 router.post("/forgotPassword", async (req, res) => {
   try {
     const { email } = req.body;
@@ -105,8 +174,6 @@ router.post("/forgotPassword", async (req, res) => {
              <p>Si vous n'avez pas fait cette demande, ignorez ce message.</p>`
     });
 
-    // console.log("Lien de réinitialisation envoyé :", resetLink);
-
     return res.status(200).json({
       success: true,
       message: "Si un compte existe pour cet email, un message a été envoyé."
@@ -117,8 +184,6 @@ router.post("/forgotPassword", async (req, res) => {
     return res.status(500).json({ success: false, message: "Une erreur est survenue" });
   }
 });
-
-
 
 router.post("/reset-password", async (req, res) => {
   try {
@@ -142,8 +207,6 @@ router.post("/reset-password", async (req, res) => {
     return res.status(400).json({ success: false, message: "Lien invalide" });
   }
 });
-
-
 
 router.post("/register", async (req, res) => {
   try {
@@ -179,8 +242,6 @@ router.post("/register", async (req, res) => {
     return res.status(500).json({ success: false, message: "Une erreur est survenue" });
   }
 });
-
-
 
 router.post('/logout', verifyToken, async (req, res) => {
   try {
