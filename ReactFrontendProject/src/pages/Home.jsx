@@ -13,36 +13,37 @@ function Acceuil() {
 useEffect(() => {
   const validateUser = async () => {
     const token = localStorage.getItem("token");
-    
+
     if (!token) {
+      setUser(null);
+      localStorage.removeItem("user");
       return;
     }
 
     try {
-      // Appeler /auth/me pour valider et récupérer les vraies données
       const response = await API.get("/auth/me", {
         headers: { Authorization: `Bearer ${token}` }
       });
-      
-      if (response.data.success) {
-        // Utiliser les données du serveur (pas du localStorage)
+
+      if (response.data?.success && response.data.user) {
         setUser(response.data.user);
-        
-        // Mettre à jour le localStorage avec les vraies données
         localStorage.setItem("user", JSON.stringify(response.data.user));
+      } else {
+        setUser(null);
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
       }
-      
     } catch (err) {
-      console.error("Token invalide ou expiré");
-      // Nettoyer si le token n'est plus valide
-      localStorage.removeItem("user");
-      localStorage.removeItem("token");
+      console.error("Token invalide ou expiré:", err);
       setUser(null);
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
     }
   };
 
   validateUser();
 }, []);
+
 
   // Déconnexion
   const handleLogout = async () => {
