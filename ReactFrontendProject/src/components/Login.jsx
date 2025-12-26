@@ -19,6 +19,16 @@ export default function LoginPage() {
     if (response.data.success) {
       const token = response.data.token;
       localStorage.setItem("token", token);
+
+      // Récupérer les infos utilisateur
+      const userResponse = await API.get("/auth/me", {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+
+      if (userResponse.data.success) {
+        localStorage.setItem("user", JSON.stringify(userResponse.data.user));
+      }
+
       navigate("/", {replace: true});
       
     } else {
