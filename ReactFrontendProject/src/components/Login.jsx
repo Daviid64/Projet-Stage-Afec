@@ -10,36 +10,25 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
 
+  
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    
-    try {
-      const response = await API.post("/auth/login", {email,password,});
+  e.preventDefault();
 
-    if (response.data.success) {
-      const token = response.data.token;
-      localStorage.setItem("token", token);
+  try {
+    const response = await API.post("/auth/login", { email, password });
 
-      const user = response.data.user;
-      localStorage.setItem("user", JSON.stringify(user));
+    if (response.success) {
+      localStorage.clear(); // sécurité
+      localStorage.setItem("token", response.token);
 
-      // Récupérer les infos utilisateur
-      const userResponse = await API.get("/auth/me", {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-
-      if (userResponse.data.success) {
-        localStorage.setItem("user", JSON.stringify(userResponse.data.user));
-      }
-
-      navigate("/", {replace: true});
-      
+      navigate("/", { replace: true });
     } else {
-      setMessage("Erreur:" + (response.data.message || "Échec de connexion"));
+      setMessage(response.message || "Échec de connexion");
     }
+
   } catch (err) {
     console.error("Erreur login:", err);
-    setMessage(err.response?.data?.message || "Erreur de connexion au serveur" );
+    setMessage(err.message || "Erreur de connexion");
   }
 };
 
