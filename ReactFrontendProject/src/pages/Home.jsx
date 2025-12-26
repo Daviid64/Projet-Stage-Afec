@@ -10,37 +10,24 @@ function Home() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // 🔐 Vérification du token + récupération user réelle (backend)
+  // Vérification du token + récupération user réelle (backend)
   useEffect(() => {
-    const fetchMe = async () => {
-      const token = localStorage.getItem("token");
-
-      if (!token) {
-        setLoading(false);
-        return;
+  const fetchMe = async () => {
+    try {
+      const res = await API.get("/auth/me");
+      if (res.success) {
+        setUser(res.user);
+        localStorage.setItem("user", JSON.stringify(res.user));
       }
+    } catch {
+      localStorage.clear();
+      setUser(null);
+    }
+  };
 
-      try {
-        const res = await API.get("/auth/me");
+  fetchMe();
+}, []);
 
-        if (res.success && res.user) {
-          setUser(res.user);
-          localStorage.setItem("user", JSON.stringify(res.user));
-        } else {
-          localStorage.clear();
-          setUser(null);
-        }
-      } catch (err) {
-        console.error("Token invalide :", err);
-        localStorage.clear();
-        setUser(null);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchMe();
-  }, []);
 
   // 🚪 Déconnexion
   const handleLogout = async () => {

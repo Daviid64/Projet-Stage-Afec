@@ -10,20 +10,21 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
 
-  
+
   const handleSubmit = async (e) => {
   e.preventDefault();
+  setMessage("");
 
   try {
-    const response = await API.post("/auth/login", { email, password });
+    const res = await API.post("/auth/login", { email, password });
 
-    if (response.success) {
-      localStorage.clear(); // sécurité
-      localStorage.setItem("token", response.token);
+    if (res.data?.success) {
+      localStorage.clear();
+      localStorage.setItem("token", res.data.token);
 
       navigate("/", { replace: true });
     } else {
-      setMessage(response.message || "Échec de connexion");
+      setMessage(res.data?.message || "Échec de connexion");
     }
 
   } catch (err) {
@@ -31,6 +32,7 @@ export default function LoginPage() {
     setMessage(err.message || "Erreur de connexion");
   }
 };
+
 
 return (
   <div className="login-container">
