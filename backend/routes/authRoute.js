@@ -134,7 +134,14 @@ router.post('/login', async (req, res) => {
       last_login: updatedUser.last_login
     };
 
-    return res.status(200).json({ success: true, message: "Connexion réussie", token });
+return res.status(200).json({ 
+  success: true, 
+  message: "Connexion réussie", 
+  token,
+  user: userSafe 
+});
+
+
 
   } catch (error) {
     console.error("Login Error =>", error);
