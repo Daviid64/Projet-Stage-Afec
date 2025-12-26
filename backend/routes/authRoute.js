@@ -63,7 +63,7 @@ router.post('/login', async (req, res) => {
       last_login: updatedUser.last_login
     };
 
-    return res.status(200).json({ success: true, message: "Connexion réussie", user: userSafe, token });
+    return res.status(200).json({ success: true, message: "Connexion réussie", token });
 
   } catch (error) {
     console.error("Login Error =>", error);
@@ -88,7 +88,7 @@ router.post("/forgotPassword", async (req, res) => {
     }
 
     const resetToken = jwt.sign({ id: user.id }, process.env.JWT_SECRET, { expiresIn: "15m" });
-    const resetLink = `${process.env.FRONTEND_URL_PROD}/reset-password?token=${resetToken}`; 
+    const resetLink = `${process.env.FRONTEND_URL}/reset-password?token=${resetToken}`; 
 
     const transporter = nodemailer.createTransport({
       service: "gmail",
@@ -105,7 +105,7 @@ router.post("/forgotPassword", async (req, res) => {
              <p>Si vous n'avez pas fait cette demande, ignorez ce message.</p>`
     });
 
-    console.log("Lien de réinitialisation envoyé :", resetLink);
+    // console.log("Lien de réinitialisation envoyé :", resetLink);
 
     return res.status(200).json({
       success: true,
