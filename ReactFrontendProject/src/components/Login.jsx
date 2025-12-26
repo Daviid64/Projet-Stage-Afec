@@ -14,18 +14,11 @@ export default function LoginPage() {
     e.preventDefault();
     
     try {
-      const response = await API.post("/auth/login", {
-        email,
-        password,
-      });
+      const response = await API.post("/auth/login", {email,password,});
 
     if (response.data.success) {
-      const user = response.data.user;
       const token = response.data.token;
-
       localStorage.setItem("token", token);
-      localStorage.setItem("user", JSON.stringify(user));
-
       navigate("/", {replace: true});
       
     } else {

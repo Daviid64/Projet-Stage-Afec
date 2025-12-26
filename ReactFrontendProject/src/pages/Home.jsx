@@ -52,7 +52,8 @@ function Acceuil() {
         </nav>
       </header>
 
-      <main className="main-content">
+      <main className="main-content">        <h2>Découvrez les métiers du numérique avec l’AFEC</h2>
+
         <h2>Découvrez les métiers du numérique avec l’AFEC</h2>
         <p>Le numérique est partout : dans nos entreprises, nos vies et nos métiers. Mais savez-vous vraiment quelles opportunités il offre ?
 Avec l’AFEC, explorez un univers de carrières passionnantes et accessibles à tous : développement web, cybersécurité, data, et design web !
