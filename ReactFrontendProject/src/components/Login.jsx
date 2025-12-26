@@ -20,6 +20,9 @@ export default function LoginPage() {
       const token = response.data.token;
       localStorage.setItem("token", token);
 
+      const user = response.data.user;
+      localStorage.setItem("user", JSON.stringify(user));
+
       // Récupérer les infos utilisateur
       const userResponse = await API.get("/auth/me", {
         headers: { Authorization: `Bearer ${token}` }
