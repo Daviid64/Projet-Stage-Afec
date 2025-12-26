@@ -9,35 +9,40 @@ function Acceuil() {
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
 
-  // Charger l'utilisateur depuis localStorage
-  useEffect(() => {
-   const validateUser = async () => {
-    const storedUser = localStorage.getItem("user");
+
+useEffect(() => {
+  const validateUser = async () => {
     const token = localStorage.getItem("token");
-  
-    if (storedUser && token) {
+    
+    if (!token) {
       return;
     }
 
     try {
+      // Appeler /auth/me pour valider et récupérer les vraies données
       const response = await API.get("/auth/me", {
-        headers: { Authorization: `Bearer ${token}` },
+        headers: { Authorization: `Bearer ${token}` }
       });
-
-      setUser(response.data.user);
-
-      localStorage.setItem("user", JSON.stringify(response.data.user));
-  } catch (err) {
-      console.error("token invalide ou expiré", err);
-
-      localStorage.removeItem("token");
+      
+      if (response.data.success) {
+        // Utiliser les données du serveur (pas du localStorage)
+        setUser(response.data.user);
+        
+        // Mettre à jour le localStorage avec les vraies données
+        localStorage.setItem("user", JSON.stringify(response.data.user));
+      }
+      
+    } catch (err) {
+      console.error("Token invalide ou expiré");
+      // Nettoyer si le token n'est plus valide
       localStorage.removeItem("user");
+      localStorage.removeItem("token");
       setUser(null);
     }
-   };
+  };
 
-   validateUser();
-  }, []);
+  validateUser();
+}, []);
 
   // Déconnexion
   const handleLogout = async () => {
